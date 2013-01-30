@@ -61,17 +61,19 @@ public class InjectorImpl implements Injector {
 			Provider<T> provider = (Provider<T>) mProviders.get(key);
 			Binding<T> binding = (Binding<T>) mBindings.get(key);
 			if (provider == null) {
-				if (binding == null)
-					throwNoFoundBinding(key, requiredBy);
+				if (binding != null) {
+					provider = binding.getProvider();
+					if (provider != null)
+						return provider;
 
-				provider = binding.getProvider();
-				if (provider != null)
-					return provider;
-
-				if (!isInScope(binding)) {
-					if (mApplicationInjector == null)
+					if (!isInScope(binding)) {
+						if (mApplicationInjector == null)
+							throwNoFoundBinding(key, requiredBy);
+						return mApplicationInjector.getProvider(key, requiredBy);
+					}
+				} else {
+					if (ReflectionUtils.isAbstract(key))
 						throwNoFoundBinding(key, requiredBy);
-					return mApplicationInjector.getProvider(key, requiredBy);
 				}
 
 				if (requiredBy != null)

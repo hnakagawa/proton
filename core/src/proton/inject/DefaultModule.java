@@ -1,9 +1,9 @@
 package proton.inject;
 
 import static proton.inject.internal.util.Validator.checkNotNull;
-import android.content.Context;
-
 import static proton.inject.internal.util.Validator.checkState;
+
+import android.content.Context;
 
 import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
