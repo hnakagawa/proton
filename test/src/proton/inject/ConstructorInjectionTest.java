@@ -11,6 +11,7 @@ public class ConstructorInjectionTest extends TestCase {
 	private Application mMockApplication;
 	private Injector mInjector;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		mMockApplication = new MockApplication();

@@ -11,6 +11,7 @@ import android.test.mock.MockApplication;
 public class ContextInjectionTest extends AndroidTestCase {
 	private Application mMockApplication;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		mMockApplication = new MockApplication();

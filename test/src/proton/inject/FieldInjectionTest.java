@@ -11,6 +11,7 @@ public class FieldInjectionTest extends AndroidTestCase {
 	private Application mMockApplication;
 	private Injector mInjector;
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		mMockApplication = new MockApplication();
@@ -63,7 +64,7 @@ public class FieldInjectionTest extends AndroidTestCase {
 		@Inject
 		private Provider<Aaa> mAaaProvider1;
 		@Inject
-       private Provider<Aaa> mAaaProvider2;
+		private Provider<Aaa> mAaaProvider2;
 	}
 
 	public interface Aaa {

@@ -62,10 +62,6 @@ public class InjectorImpl implements Injector {
 			Binding<T> binding = (Binding<T>) mBindings.get(key);
 			if (provider == null) {
 				if (binding != null) {
-					provider = binding.getProvider();
-					if (provider != null)
-						return provider;
-
 					if (!isInScope(binding)) {
 						if (mApplicationInjector == null)
 							throwNoFoundBinding(key, requiredBy);
@@ -87,7 +83,9 @@ public class InjectorImpl implements Injector {
 					throwNoFoundBinding(key, requiredBy);
 			}
 
-			return (Provider<T>) (binding != null && binding.getProviderClass() != null ? provider.get() : provider);
+			return (Provider<T>) (binding != null
+					&& (binding.getProviderClass() != null || binding.getProvider() != null) ? provider.get()
+					: provider);
 		}
 	}
 
@@ -96,17 +94,7 @@ public class InjectorImpl implements Injector {
 		synchronized (LOCK) {
 			Field[] fields = getFiels(obj.getClass());
 			pollTraversalQueue();
-
-			for (Field field : fields) {
-				try {
-					Object value = getValueOrProvider(field.getType(), field.getGenericType(), obj);
-					field.set(obj, value);
-				} catch (IllegalArgumentException exp) {
-					throw new ProvisionException(exp.getCause());
-				} catch (IllegalAccessException exp) {
-					throw new ProvisionException(exp.getCause());
-				}
-			}
+			setFields(obj, fields, obj);
 			return obj;
 		}
 	}
@@ -126,18 +114,20 @@ public class InjectorImpl implements Injector {
 		while ((required = mTraversalQueue.poll()) != null) {
 			if (mProviders.get(required.key) != null)
 				continue;
-			addProvider(required);
+			mProviders.put(required.key, createProvider(required));
 		}
 
 		if (mApplicationInjector != null)
 			mApplicationInjector.pollTraversalQueue();
 	}
 
-	private void addProvider(Required required) {
-		Provider<?> provider;
+	private Provider<?> createProvider(Required required) {
+		Provider<?> provider = null;
 		if (required.key == Injector.class)
 			provider = mInjectorProvdier;
-		else {
+		else if (required.binding != null && (provider = required.binding.getProvider()) != null) {
+			provider = createProviderProvider(provider, getFiels(provider.getClass()));
+		} else {
 			Class<?> clazz = (Class<?>) (required.binding != null ? required.binding.getToClass() : required.key);
 			Field[] fields = getFiels(clazz);
 
@@ -148,7 +138,27 @@ public class InjectorImpl implements Injector {
 			provider = createJitProvider(constructor, types, fields, required.requiredBy);
 		}
 
-		mProviders.put(required.key, provider);
+		return provider;
+	}
+
+	private Provider<?> createProviderProvider(final Provider<?> provider, final Field[] fields) {
+		return new Provider<Object>() {
+			private volatile boolean isInjected;
+
+			@Override
+			public Object get() {
+				if (!isInjected) {
+					synchronized (this) {
+						if (!isInjected) {
+							setFields(provider, fields, provider);
+							isInjected = true;
+						}
+
+					}
+				}
+				return provider;
+			}
+		};
 	}
 
 	private Provider<?> createJitProvider(final Constructor<?> constructor, final Type[] types, final Field[] fields,
@@ -168,15 +178,11 @@ public class InjectorImpl implements Injector {
 
 							try {
 								obj = constructor.newInstance(args);
-								for (int i = 0; i < fields.length; i++) {
-									Object value = getValueOrProvider(fields[i].getType(), fields[i].getGenericType(),
-											requiredBy);
-									fields[i].set(obj, value);
-								}
+								setFields(obj, fields, requiredBy);
 							} catch (IllegalAccessException exp) {
-								throw new ProvisionException(exp.getCause());
+								throw new ProvisionException(exp);
 							} catch (InvocationTargetException exp) {
-								throw new ProvisionException(exp.getCause());
+								throw new ProvisionException(exp);
 							} catch (InstantiationException exp) {
 								throw new ProvisionException(exp);
 							}
@@ -186,6 +192,17 @@ public class InjectorImpl implements Injector {
 				return obj;
 			}
 		};
+	}
+
+	private void setFields(Object receiver, Field[] fields, Object requiredBy) {
+		try {
+			for (int i = 0; i < fields.length; i++) {
+				Object value = getValueOrProvider(fields[i].getType(), fields[i].getGenericType(), requiredBy);
+				fields[i].set(receiver, value);
+			}
+		} catch (IllegalAccessException exp) {
+			throw new ProvisionException(exp);
+		}
 	}
 
 	private Object getValueOrProvider(Class<?> clazz, Type type, Object requiredBy) {
@@ -237,10 +254,8 @@ public class InjectorImpl implements Injector {
 		Class<?> clazz = ReflectionUtils.toActualClass(type);
 
 		Binding<?> binding = mBindings.get(clazz);
-		if (binding == null) {
-			if (ReflectionUtils.isAbstract(clazz) && clazz != Injector.class)
-				throwNoFoundBinding(type, requiredBy);
-		}
+		if (binding == null && ReflectionUtils.isAbstract(clazz) && clazz != Injector.class)
+			throwNoFoundBinding(type, requiredBy);
 
 		Required req = new Required(clazz, binding, requiredBy);
 		if (isInScope(binding) || (mApplicationInjector == null && clazz == Injector.class))

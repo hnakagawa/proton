@@ -31,8 +31,13 @@ public class Proton {
 		sInjectors.put(app, sApplicationInjector);
 	}
 
+	public static synchronized Injector getApplicationInjector() {
+		return sApplicationInjector;
+	}
+
 	public static synchronized Injector getInjector(Context context) {
-		InjectorImpl parent = checkNotNull(sInjectors.get(context.getApplicationContext()), "Proton is not initialized yet");
+		InjectorImpl parent = checkNotNull(sInjectors.get(context.getApplicationContext()),
+				"Proton is not initialized yet");
 
 		InjectorImpl injector = sInjectors.get(context);
 		if (injector == null) {
@@ -42,11 +47,11 @@ public class Proton {
 
 		return injector;
 	}
-	
+
 	public static synchronized void destroy() {
-	    sBindingContainer = null;
-	    sApplicationInjector = null;
-	    sInjectors.clear();
+		sBindingContainer = null;
+		sApplicationInjector = null;
+		sInjectors.clear();
 	}
 
 	public static synchronized void destroyInjector(Context context) {
