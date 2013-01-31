@@ -79,7 +79,7 @@ public class InjectorImpl implements Injector {
 				if (requiredBy != null)
 					throwNoFoundBinding(key, requiredBy);
 
-				enqueueTraversal(key, requiredBy == null ? "root" : requiredBy);
+				enqueueTraversal(key, "root");
 				pollTraversalQueue();
 
 				provider = (Provider<T>) mProviders.get(key);
