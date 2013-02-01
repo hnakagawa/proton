@@ -8,7 +8,6 @@ Inspired by MiniGuice
 
 Todo
 -----
-+   Scope annotation
 +   Clarity error messages
 +   Context wrapper class, e.g. Activity, Service
 +   Test utility

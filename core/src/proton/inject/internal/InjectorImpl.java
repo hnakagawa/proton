@@ -62,25 +62,19 @@ public class InjectorImpl implements Injector {
 			Provider<T> provider = (Provider<T>) mProviders.get(key);
 			Binding<T> binding = (Binding<T>) mBindings.get(key);
 			if (provider == null) {
-				if (binding != null) {
-					Class<?> toClass = binding.getToClass();
-					if (toClass == null)
-						toClass = key;
+				if (binding == null && InjectorUtils.isAbstract(key))
+					throwNoFoundBinding(key, requiredBy);
 
-					if (!isInScope(key, binding)) {
-						if (mApplicationInjector == null)
-							throwNoFoundBinding(key, requiredBy);
-						return mApplicationInjector.getProvider(key, requiredBy);
-					}
-				} else {
-					if (InjectorUtils.isAbstract(key))
+				if (!isInScope(key, binding)) {
+					if (mApplicationInjector == null)
 						throwNoFoundBinding(key, requiredBy);
+					return mApplicationInjector.getProvider(key, requiredBy);
 				}
 
 				if (requiredBy != null)
 					throwNoFoundBinding(key, requiredBy);
 
-				enqueueTraversal(key, "root");
+				addTraversal(key, "root");
 				pollTraversalQueue();
 
 				provider = (Provider<T>) mProviders.get(key);
@@ -96,7 +90,7 @@ public class InjectorImpl implements Injector {
 	@Override
 	public <T> T inject(T obj) {
 		synchronized (LOCK) {
-			Field[] fields = getFiels(obj.getClass());
+			Field[] fields = getFielsAddTraversal(obj.getClass());
 			pollTraversalQueue();
 			setFields(obj, fields, obj);
 			return obj;
@@ -130,15 +124,15 @@ public class InjectorImpl implements Injector {
 		if (required.key == Injector.class)
 			provider = mInjectorProvdier;
 		else if (required.binding != null && (provider = required.binding.getProvider()) != null) {
-			provider = new ApplicationProvider(provider, getFiels(provider.getClass()));
+			provider = new ApplicationProvider(provider, getFielsAddTraversal(provider.getClass()));
 		} else {
 			Class<?> clazz = (Class<?>) (required.binding != null ? required.binding.getToClass() : required.key);
-			Field[] fields = getFiels(clazz);
+			Field[] fields = getFielsAddTraversal(clazz);
 
 			Constructor<?> constructor = getConstructor(clazz, required.requiredBy);
 			Type[] types = constructor.getGenericParameterTypes();
 			for (Type type : types)
-				enqueueTraversal(type, constructor);
+				addTraversal(type, constructor);
 
 			if (getScope(clazz, required.binding) == Dependent.class)
 				provider = new DependentProvider(constructor, types, fields, required.requiredBy);
@@ -203,7 +197,7 @@ public class InjectorImpl implements Injector {
 		return Provider.class.isAssignableFrom(clazz) ? provider : provider.get();
 	}
 
-	private Field[] getFiels(Class<?> clazz) {
+	private Field[] getFielsAddTraversal(Class<?> clazz) {
 		List<Field> fieldsList = new ArrayList<Field>();
 		for (Class<?> c = clazz; c != Object.class; c = c.getSuperclass()) {
 			for (Field field : c.getDeclaredFields()) {
@@ -212,7 +206,7 @@ public class InjectorImpl implements Injector {
 
 				field.setAccessible(true);
 				fieldsList.add(field);
-				enqueueTraversal(field.getGenericType(), field);
+				addTraversal(field.getGenericType(), field);
 			}
 		}
 
@@ -243,7 +237,7 @@ public class InjectorImpl implements Injector {
 		return constructor;
 	}
 
-	private void enqueueTraversal(Type type, Object requiredBy) {
+	private void addTraversal(Type type, Object requiredBy) {
 		Class<?> clazz = InjectorUtils.toActualClass(type);
 
 		Binding<?> binding = mBindings.get(clazz);

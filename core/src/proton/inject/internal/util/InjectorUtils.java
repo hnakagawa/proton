@@ -9,6 +9,7 @@ import javax.inject.Provider;
 
 import proton.inject.ApplicationScoped;
 import proton.inject.ContextScoped;
+import proton.inject.Dependent;
 
 public final class InjectorUtils {
 	private InjectorUtils() {
@@ -30,7 +31,7 @@ public final class InjectorUtils {
 		Annotation[] anns = clazz.getAnnotations();
 		for (Annotation a : anns) {
 			Class<?> annClass = a.annotationType();
-			if (ApplicationScoped.class == annClass || Deprecated.class == annClass || ContextScoped.class == annClass)
+			if (ApplicationScoped.class == annClass || Dependent.class == annClass || ContextScoped.class == annClass)
 				return annClass;
 
 		}

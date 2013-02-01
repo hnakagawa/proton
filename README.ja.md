@@ -8,7 +8,6 @@ Inspired by MiniGuice
 
 Todo
 ------
-+   スコープアノテーション
 +   エラーメッセージを分かりやすくする
 +   Activity等のラッパークラス
 +   テストユーティリティ

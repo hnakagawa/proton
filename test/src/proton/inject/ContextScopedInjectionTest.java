@@ -8,7 +8,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 import android.test.mock.MockApplication;
 
-public class ScopedInjectionTest extends AndroidTestCase {
+public class ContextScopedInjectionTest extends AndroidTestCase {
 	private Application mMockApplication;
 
 	@Override
@@ -20,8 +20,6 @@ public class ScopedInjectionTest extends AndroidTestCase {
 			protected void configure() {
 				super.configure();
 				bind(Client.class);
-				bind(ApplicationScopedClass.class).in(ApplicationScoped.class);
-				bind(IllegalApplicationScopedClass.class).in(ApplicationScoped.class);
 				bind(ContextScopedClass.class);
 			}
 		});
@@ -33,7 +31,7 @@ public class ScopedInjectionTest extends AndroidTestCase {
 		super.tearDown();
 	}
 
-	public void testGetInstanceWithContextScoped() {
+	public void testGetInstance() {
 		Context context1 = new MockContext(mMockApplication);
 		Client c = Proton.getInjector(context1).getInstance(Client.class);
 		assertNotNull(c);
@@ -42,16 +40,7 @@ public class ScopedInjectionTest extends AndroidTestCase {
 				Proton.getInjector(new MockContext(mMockApplication)).getInstance(ContextScopedClass.class));
 	}
 
-	public void testGetInstanceWithApplicationScoped() {
-		Context context1 = new MockContext(mMockApplication);
-		Client c = Proton.getInjector(context1).getInstance(Client.class);
-		assertNotNull(c.mApplicationScopedClass);
-		assertEquals(c.mApplicationScopedClass, Proton.getInjector(context1).getInstance(ApplicationScopedClass.class));
-		assertEquals(c.mApplicationScopedClass,
-				Proton.getInjector(new MockContext(mMockApplication)).getInstance(ApplicationScopedClass.class));
-	}
-
-	public void testInjectWithContextScoped() {
+	public void testInject() {
 		Context context1 = new MockContext(mMockApplication);
 		Client obj1 = Proton.getInjector(context1).inject(new Client());
 		assertNotNull(obj1.mContextScopedClass1);
@@ -68,29 +57,7 @@ public class ScopedInjectionTest extends AndroidTestCase {
 		assertNotSame(obj1.mContextScopedClassProvider1, obj3.mContextScopedClassProvider1);
 	}
 
-	public void testInjectWithApplicationScoped() {
-		Client obj1 = Proton.getInjector(new MockContext(mMockApplication)).inject(new Client());
-		Client obj2 = Proton.getInjector(new MockContext(mMockApplication)).inject(new Client());
-		assertEquals(obj1.mApplicationScopedClass, obj2.mApplicationScopedClass);
-		assertEquals(obj1.mApplicationScopedClass, obj2.mApplicationScopedClassProvider.get());
-	}
-
-	public void testGetInstanceWithIllegalApplicationScoped() {
-		try {
-			Context context = new MockContext(mMockApplication);
-			Proton.getInjector(context).getInstance(IllegalApplicationScopedClass.class);
-			fail();
-		} catch (ProvisionException exp) {
-		}
-	}
-
 	public static class Client {
-		@Inject
-		private ApplicationScopedClass mApplicationScopedClass;
-
-		@Inject
-		private Provider<ApplicationScopedClass> mApplicationScopedClassProvider;
-
 		@Inject
 		private ContextScopedClass mContextScopedClass1;
 
@@ -104,15 +71,6 @@ public class ScopedInjectionTest extends AndroidTestCase {
 		private Provider<ContextScopedClass> mContextScopedClassProvider2;
 	}
 
-	public static class ApplicationScopedClass {
-	}
-
 	public static class ContextScopedClass {
-	}
-
-	public static class IllegalApplicationScopedClass {
-		@SuppressWarnings("unused")
-		@Inject
-		private ContextScopedClass mContextScopedClass;
 	}
 }
