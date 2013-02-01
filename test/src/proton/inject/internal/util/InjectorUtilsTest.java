@@ -6,19 +6,19 @@ import javax.inject.Provider;
 
 import android.test.AndroidTestCase;
 
-public class ReflectionUtilsTest extends AndroidTestCase {
+public class InjectorUtilsTest extends AndroidTestCase {
 
     public void testToActualClass() throws Exception {
         Client c = new Client();
         Field field = c.getClass().getDeclaredField("provider");
-        Class<?> clazz = ReflectionUtils.toActualClass(field.getGenericType());
+        Class<?> clazz = InjectorUtils.toActualClass(field.getGenericType());
         assertEquals(String.class, clazz);
     }
 
     public void testIsAbstract() {
-        assertTrue(ReflectionUtils.isAbstract(Aaa.class));
-        assertTrue(ReflectionUtils.isAbstract(Bbb.class));
-        assertFalse(ReflectionUtils.isAbstract(Ccc.class));
+        assertTrue(InjectorUtils.isAbstract(Aaa.class));
+        assertTrue(InjectorUtils.isAbstract(Bbb.class));
+        assertFalse(InjectorUtils.isAbstract(Ccc.class));
     }
     
     public interface Aaa {        

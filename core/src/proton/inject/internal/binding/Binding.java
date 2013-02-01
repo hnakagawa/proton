@@ -14,6 +14,4 @@ public interface Binding<T> {
 	public Class<? extends Provider<T>> getProviderClass();
 
 	public Class<? extends Annotation> getScope();
-
-	public boolean isImplicitScope();
 }

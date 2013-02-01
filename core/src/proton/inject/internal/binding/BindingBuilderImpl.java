@@ -7,8 +7,9 @@ import javax.inject.Provider;
 import static proton.inject.internal.util.Validator.checkNotNull;
 
 import proton.inject.ApplicationScoped;
+import proton.inject.ContextScoped;
 import proton.inject.Dependent;
-import proton.inject.internal.util.ReflectionUtils;
+import proton.inject.internal.util.InjectorUtils;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	private final BindingImpl<T> mBinding;
@@ -16,7 +17,7 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	public BindingBuilderImpl(BindingImpl<T> binding) {
 		mBinding = binding;
 		Class<?> clazz = binding.getBindClass();
-		if (!ReflectionUtils.isAbstract(clazz))
+		if (!InjectorUtils.isAbstract(clazz))
 			setScope(clazz);
 	}
 
@@ -30,7 +31,7 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	@Override
 	public ScopedBuilder toProvider(Class<? extends Provider<T>> provider) {
 		mBinding.setProviderClass(checkNotNull(provider, "provider"));
-		setScope(ReflectionUtils.toActualClass(provider));
+		setScope(InjectorUtils.toActualClass(provider));
 		return this;
 	}
 
@@ -48,7 +49,8 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	private void setScope(Class<?> clazz) {
 		Annotation ann;
 		if ((ann = clazz.getAnnotation(ApplicationScoped.class)) != null
-				|| (ann = clazz.getAnnotation(Dependent.class)) != null)
+				|| (ann = clazz.getAnnotation(Dependent.class)) != null
+				|| (ann = clazz.getAnnotation(ContextScoped.class)) != null)
 			mBinding.setScope(ann.annotationType());
 	}
 }

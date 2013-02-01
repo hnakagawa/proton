@@ -3,7 +3,6 @@ package proton.inject.binding.binding;
 import javax.inject.Provider;
 
 import proton.inject.ApplicationScoped;
-import proton.inject.ContextScoped;
 import proton.inject.Dependent;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.BindingImpl;
@@ -69,7 +68,7 @@ public class BindingBuilderImplTest extends AndroidTestCase {
 
 	public void testIn() {
 		BindingImpl<Aaa> b = new BindingImpl<BindingBuilderImplTest.Aaa>(Aaa.class);
-		assertEquals(ContextScoped.class, b.getScope());
+		assertNull(b.getScope());
 		new BindingBuilderImpl<Aaa>(b).in(ApplicationScoped.class);
 		assertEquals(ApplicationScoped.class, b.getScope());
 	}

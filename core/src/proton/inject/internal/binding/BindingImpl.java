@@ -4,15 +4,12 @@ import java.lang.annotation.Annotation;
 
 import javax.inject.Provider;
 
-import proton.inject.ContextScoped;
-
 public class BindingImpl<T> implements Binding<T> {
 	private final Class<T> mBindClass;
 	private Class<?> mToClass;
 	private Class<? extends Provider<T>> mProviderClass;
 	private Provider<T> mProvider;
-	private Class<? extends Annotation> mScope = ContextScoped.class;
-	private boolean mIsImplicitScope = true;
+	private Class<? extends Annotation> mScope;
 
 	public BindingImpl(Class<T> key) {
 		mBindClass = key;
@@ -53,16 +50,10 @@ public class BindingImpl<T> implements Binding<T> {
 
 	public void setScope(Class<? extends Annotation> scope) {
 		mScope = scope;
-		mIsImplicitScope = false;
 	}
 
 	@Override
 	public Class<? extends Annotation> getScope() {
 		return mScope;
-	}
-
-	@Override
-	public boolean isImplicitScope() {
-		return mIsImplicitScope;
 	}
 }

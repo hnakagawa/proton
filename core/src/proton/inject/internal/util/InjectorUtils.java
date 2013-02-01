@@ -1,13 +1,17 @@
 package proton.inject.internal.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import javax.inject.Provider;
 
-public final class ReflectionUtils {
-	private ReflectionUtils() {
+import proton.inject.ApplicationScoped;
+import proton.inject.ContextScoped;
+
+public final class InjectorUtils {
+	private InjectorUtils() {
 	}
 
 	public static Class<?> toActualClass(Type type) {
@@ -20,5 +24,16 @@ public final class ReflectionUtils {
 
 	public static boolean isAbstract(Class<?> clazz) {
 		return clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers());
+	}
+
+	public static Class<?> getScopeAnnotation(Class<?> clazz) {
+		Annotation[] anns = clazz.getAnnotations();
+		for (Annotation a : anns) {
+			Class<?> annClass = a.annotationType();
+			if (ApplicationScoped.class == annClass || Deprecated.class == annClass || ContextScoped.class == annClass)
+				return annClass;
+
+		}
+		return ContextScoped.class;
 	}
 }
