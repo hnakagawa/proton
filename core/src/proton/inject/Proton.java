@@ -8,14 +8,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import proton.inject.internal.InjectorImpl;
-import proton.inject.internal.binding.BindingsImpl;
+import proton.inject.internal.binding.Bindings;
 
 import android.app.Application;
 import android.content.Context;
 
 public final class Proton {
 	private static Map<Context, InjectorImpl> sInjectors;
-	private static BindingsImpl sBindingContainer;
+	private static Bindings sBindingContainer;
 
 	private Proton() {}
 
@@ -27,7 +27,7 @@ public final class Proton {
 		synchronized (Proton.class) {
 			checkState(sInjectors == null, "Already initialized Proton");
 			sInjectors = new WeakHashMap<Context, InjectorImpl>();
-			sBindingContainer = new BindingsImpl();
+			sBindingContainer = new Bindings();
 
 			module.configure(sBindingContainer);
 

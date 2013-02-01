@@ -1,7 +1,7 @@
 package proton.inject;
 
-import proton.inject.internal.binding.BindingsImpl;
+import proton.inject.internal.binding.Bindings;
 
 public interface Module {
-    public void configure(BindingsImpl bindingContainer);
+    public void configure(Bindings bindings);
 }

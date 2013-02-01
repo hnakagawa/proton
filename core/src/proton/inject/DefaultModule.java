@@ -7,22 +7,22 @@ import android.content.Context;
 
 import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
-import proton.inject.internal.binding.BindingImpl;
-import proton.inject.internal.binding.BindingsImpl;
+import proton.inject.internal.binding.Binding;
+import proton.inject.internal.binding.Bindings;
 import proton.inject.internal.provider.ContextProvider;
 
 public class DefaultModule implements Module {
-	private BindingsImpl mBindingContainer;
+	private Bindings mBindings;
 
 	@Override
-	public final synchronized void configure(BindingsImpl bindingContainer) {
-		checkState(mBindingContainer == null, "Re-entry is not allowed.");
+	public final synchronized void configure(Bindings bindings) {
+		checkState(mBindings == null, "Re-entry is not allowed.");
 
-		mBindingContainer = checkNotNull(bindingContainer, "BindingContainer");
+		mBindings = checkNotNull(bindings, "bindings");
 		try {
 			configure();
 		} finally {
-			mBindingContainer = null;
+			mBindings = null;
 		}
 	}
 
@@ -31,9 +31,9 @@ public class DefaultModule implements Module {
 	}
 
 	protected <T> BindingBuilder<T> bind(Class<T> clazz) {
-		checkState(mBindingContainer != null, "The BindingContainer can only be used inside configure()");
-		BindingImpl<T> binding = new BindingImpl<T>(clazz);
-		mBindingContainer.add(binding);
+		checkState(mBindings != null, "The Bindings can only be used inside configure()");
+		Binding<T> binding = new Binding<T>(clazz);
+		mBindings.add(binding);
 		return new BindingBuilderImpl<T>(binding);
 	}
 }

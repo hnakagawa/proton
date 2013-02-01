@@ -12,9 +12,9 @@ import proton.inject.Dependent;
 import proton.inject.internal.util.InjectorUtils;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {
-	private final BindingImpl<T> mBinding;
+	private final Binding<T> mBinding;
 
-	public BindingBuilderImpl(BindingImpl<T> binding) {
+	public BindingBuilderImpl(Binding<T> binding) {
 		mBinding = binding;
 		Class<?> clazz = binding.getBindClass();
 		if (!InjectorUtils.isAbstract(clazz))
