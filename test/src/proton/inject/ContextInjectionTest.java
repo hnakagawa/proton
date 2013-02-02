@@ -38,6 +38,14 @@ public class ContextInjectionTest extends AndroidTestCase {
 		assertNotSame(context, Proton.getInjector(new MockContext(mMockApplication)).getInstance(Client.class).context2);
 	}
 
+	public void testGetInstanceWithApplicationScoped() {
+		try {
+			Proton.getInjector(new MockContext(mMockApplication)).getInstance(ApplicationScopedClass.class);
+			fail();
+		} catch (ProvisionException exp) {
+		}
+	}
+
 	public void testGetProvider() {
 		Context context = new MockContext(mMockApplication);
 		Provider<Context> provider1 = Proton.getInjector(context).getProvider(Context.class);
@@ -59,5 +67,12 @@ public class ContextInjectionTest extends AndroidTestCase {
 
 		@Inject
 		private Context context2;
+	}
+
+	@ApplicationScoped
+	public static class ApplicationScopedClass {
+		@SuppressWarnings("unused")
+		@Inject
+		private Context context;
 	}
 }

@@ -37,30 +37,30 @@ public class ConstructorInjectionTest extends TestCase {
 
 	public void testGetInstance() {
 		Client obj = mInjector.getInstance(Client.class);
-		assertNotNull(obj.mAaa1);
-		assertEquals(obj.mAaa1, obj.mAaa2);
-		assertNotNull(((BbbImp) obj.mBbb).mCcc);
+		assertNotNull(obj.aaa1);
+		assertEquals(obj.aaa1, obj.aaa2);
+		assertNotNull(((BbbImp) obj.bbb).ccc);
 
-		assertNotNull(obj.mAaaProvider1);
-		assertEquals(obj.mAaa1, obj.mAaaProvider1.get());
-		assertEquals(obj.mAaaProvider1, obj.mAaaProvider2);
+		assertNotNull(obj.aaaProvider1);
+		assertEquals(obj.aaa1, obj.aaaProvider1.get());
+		assertEquals(obj.aaaProvider1, obj.aaaProvider2);
 	}
 
 	public static class Client {
-		private Aaa mAaa1;
-		private Aaa mAaa2;
-		private Bbb mBbb;
+		private Aaa aaa1;
+		private Aaa aaa2;
+		private Bbb bbb;
 
-		private Provider<Aaa> mAaaProvider1;
-		private Provider<Aaa> mAaaProvider2;
+		private Provider<Aaa> aaaProvider1;
+		private Provider<Aaa> aaaProvider2;
 
 		@Inject
 		public Client(Aaa aaa1, Aaa aaa2, Bbb bbb, Provider<Aaa> provider1, Provider<Aaa> provider2) {
-			mAaa1 = aaa1;
-			mAaa2 = aaa2;
-			mBbb = bbb;
-			mAaaProvider1 = provider1;
-			mAaaProvider2 = provider2;
+			this.aaa1 = aaa1;
+			this.aaa2 = aaa2;
+			this.bbb = bbb;
+			this.aaaProvider1 = provider1;
+			this.aaaProvider2 = provider2;
 		}
 	}
 
@@ -74,11 +74,11 @@ public class ConstructorInjectionTest extends TestCase {
 	}
 
 	public static class BbbImp implements Bbb {
-		private Ccc mCcc;
+		private Ccc ccc;
 
 		@Inject
 		public BbbImp(Ccc ccc) {
-			mCcc = ccc;
+			this.ccc = ccc;
 		}
 	}
 

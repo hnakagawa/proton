@@ -35,9 +35,9 @@ public class DependentInjectionTest extends AndroidTestCase {
 
 	public void testGetInstance() {
 		Client c = mInjector.getInstance(Client.class);
-		assertNotNull(c.mAaa1);
-		assertNotSame(c.mAaa1, mInjector.getInstance(Aaa.class));
-		assertNotSame(c.mAaa1, c.mAaa2);
+		assertNotNull(c.aaa1);
+		assertNotSame(c.aaa1, mInjector.getInstance(Aaa.class));
+		assertNotSame(c.aaa1, c.aaa2);
 	}
 
 	public void testGetProvider() {
@@ -48,24 +48,24 @@ public class DependentInjectionTest extends AndroidTestCase {
 
 	public void testInject() {
 		Client c = mInjector.inject(new Client());
-		assertNotNull(c.mAaa1);
-		assertNotSame(c.mAaa1, c.mAaa2);
-		assertNotNull(c.mAaaProvider1);
-		assertNotSame(c.mAaaProvider1, c.mAaaProvider2);
+		assertNotNull(c.aaa1);
+		assertNotSame(c.aaa1, c.aaa2);
+		assertNotNull(c.aaaProvider1);
+		assertNotSame(c.aaaProvider1, c.aaaProvider2);
 	}
 
 	public static class Client {
 		@Inject
-		private Aaa mAaa1;
+		private Aaa aaa1;
 
 		@Inject
-		private Aaa mAaa2;
+		private Aaa aaa2;
 
 		@Inject
-		private Provider<Aaa> mAaaProvider1;
+		private Provider<Aaa> aaaProvider1;
 
 		@Inject
-		private Provider<Aaa> mAaaProvider2;
+		private Provider<Aaa> aaaProvider2;
 	}
 
 	public static class Aaa {

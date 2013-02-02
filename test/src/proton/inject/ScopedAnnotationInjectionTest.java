@@ -56,21 +56,21 @@ public class ScopedAnnotationInjectionTest extends AndroidTestCase {
 
 	public void testInject() {
 		Client c = mInjector.inject(new Client());
-		assertEquals(c.mContextScopedClass, mInjector.getInstance(ContextScopedClass.class));
-		assertEquals(c.mApplicationScopedClass,
+		assertEquals(c.contextScopedClass, mInjector.getInstance(ContextScopedClass.class));
+		assertEquals(c.applicationScopedClass,
 				Proton.getInjector(new MockContext(mMockApplication)).getInstance(ApplicationScopedClass.class));
-		assertNotSame(c.mDependentScopedClass, mInjector.getInstance(DependentScopedClass.class));
+		assertNotSame(c.dependentScopedClass, mInjector.getInstance(DependentScopedClass.class));
 	}
 
 	public static class Client {
 		@Inject
-		private ContextScopedClass mContextScopedClass;
+		private ContextScopedClass contextScopedClass;
 
 		@Inject
-		private ApplicationScopedClass mApplicationScopedClass;
+		private ApplicationScopedClass applicationScopedClass;
 
 		@Inject
-		private DependentScopedClass mDependentScopedClass;
+		private DependentScopedClass dependentScopedClass;
 	}
 
 	public interface ContextScopedClass {

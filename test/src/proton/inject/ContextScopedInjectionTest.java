@@ -35,40 +35,40 @@ public class ContextScopedInjectionTest extends AndroidTestCase {
 		Context context1 = new MockContext(mMockApplication);
 		Client c = Proton.getInjector(context1).getInstance(Client.class);
 		assertNotNull(c);
-		assertEquals(c.mContextScopedClass1, Proton.getInjector(context1).getInstance(ContextScopedClass.class));
-		assertNotSame(c.mContextScopedClass1,
+		assertEquals(c.contextScopedClass1, Proton.getInjector(context1).getInstance(ContextScopedClass.class));
+		assertNotSame(c.contextScopedClass1,
 				Proton.getInjector(new MockContext(mMockApplication)).getInstance(ContextScopedClass.class));
 	}
 
 	public void testInject() {
 		Context context1 = new MockContext(mMockApplication);
 		Client obj1 = Proton.getInjector(context1).inject(new Client());
-		assertNotNull(obj1.mContextScopedClass1);
-		assertEquals(obj1.mContextScopedClass1, obj1.mContextScopedClass2);
-		assertNotNull(obj1.mContextScopedClassProvider1);
-		assertEquals(obj1.mContextScopedClassProvider1, obj1.mContextScopedClassProvider2);
+		assertNotNull(obj1.contextScopedClass1);
+		assertEquals(obj1.contextScopedClass1, obj1.contextScopedClass2);
+		assertNotNull(obj1.contextScopedClassProvider1);
+		assertEquals(obj1.contextScopedClassProvider1, obj1.contextScopedClassProvider2);
 
 		Client obj2 = Proton.getInjector(context1).inject(new Client());
-		assertEquals(obj1.mContextScopedClass1, obj2.mContextScopedClass2);
-		assertEquals(obj1.mContextScopedClassProvider1, obj2.mContextScopedClassProvider2);
+		assertEquals(obj1.contextScopedClass1, obj2.contextScopedClass2);
+		assertEquals(obj1.contextScopedClassProvider1, obj2.contextScopedClassProvider2);
 
 		Client obj3 = Proton.getInjector(new MockContext(mMockApplication)).inject(new Client());
-		assertNotSame(obj1.mContextScopedClass1, obj3.mContextScopedClass1);
-		assertNotSame(obj1.mContextScopedClassProvider1, obj3.mContextScopedClassProvider1);
+		assertNotSame(obj1.contextScopedClass1, obj3.contextScopedClass1);
+		assertNotSame(obj1.contextScopedClassProvider1, obj3.contextScopedClassProvider1);
 	}
 
 	public static class Client {
 		@Inject
-		private ContextScopedClass mContextScopedClass1;
+		private ContextScopedClass contextScopedClass1;
 
 		@Inject
-		private ContextScopedClass mContextScopedClass2;
+		private ContextScopedClass contextScopedClass2;
 
 		@Inject
-		private Provider<ContextScopedClass> mContextScopedClassProvider1;
+		private Provider<ContextScopedClass> contextScopedClassProvider1;
 
 		@Inject
-		private Provider<ContextScopedClass> mContextScopedClassProvider2;
+		private Provider<ContextScopedClass> contextScopedClassProvider2;
 	}
 
 	public static class ContextScopedClass {

@@ -47,17 +47,17 @@ public class ProviderInjectionTest extends AndroidTestCase {
 
 	public void testInject() {
 		Client c1 = mInjector.inject(new Client());
-		assertNotNull(c1.mAaaProvider1);
-		assertEquals(c1.mAaaProvider1, c1.mAaaProvider2);
-		assertNotNull(((AaaProvider) c1.mAaaProvider1).mBbb);
+		assertNotNull(c1.aaaProvider1);
+		assertEquals(c1.aaaProvider1, c1.aaaProvider2);
+		assertNotNull(((AaaProvider) c1.aaaProvider1).bbb);
 	}
 
 	public static class Client {
 		@Inject
-		private Provider<Aaa> mAaaProvider1;
+		private Provider<Aaa> aaaProvider1;
 
 		@Inject
-		private Provider<Aaa> mAaaProvider2;
+		private Provider<Aaa> aaaProvider2;
 	}
 
 	public static class Aaa {
@@ -69,7 +69,7 @@ public class ProviderInjectionTest extends AndroidTestCase {
 	public static class AaaProvider implements Provider<Aaa> {
 		private Aaa mAaa;
 		@Inject
-		private Bbb mBbb;
+		private Bbb bbb;
 
 		@Override
 		public Aaa get() {

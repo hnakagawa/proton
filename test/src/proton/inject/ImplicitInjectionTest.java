@@ -32,13 +32,13 @@ public class ImplicitInjectionTest extends AndroidTestCase {
 
 	public void testInject() {
 		Client c = mInjector.inject(new Client());
-		assertNotNull(c.mAaa);
+		assertNotNull(c.aaa);
 	}
 
 	public void testInstance() {
 		Client c = mInjector.getInstance(Client.class);
 		assertNotNull(c);
-		assertNotNull(c.mAaa);
+		assertNotNull(c.aaa);
 	}
 
 	public void testInstanceWithIllegalInjection() {
@@ -59,7 +59,7 @@ public class ImplicitInjectionTest extends AndroidTestCase {
 
 	public static class Client {
 		@Inject
-		private Aaa mAaa;
+		private Aaa aaa;
 	}
 
 	public static class Aaa {
@@ -68,7 +68,7 @@ public class ImplicitInjectionTest extends AndroidTestCase {
 	public static class IllegalImplicitInjectionClass {
 		@SuppressWarnings("unused")
 		@Inject
-		private Bbb mBbb;
+		private Bbb bbb;
 	}
 
 	public interface Bbb {

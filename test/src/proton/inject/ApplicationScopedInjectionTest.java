@@ -36,9 +36,9 @@ public class ApplicationScopedInjectionTest extends AndroidTestCase {
 	public void testGetInstanceWithApplicationScoped() {
 		Context context1 = new MockContext(mMockApplication);
 		Client c = Proton.getInjector(context1).getInstance(Client.class);
-		assertNotNull(c.mApplicationScopedClass);
-		assertEquals(c.mApplicationScopedClass, Proton.getInjector(context1).getInstance(ApplicationScopedClass.class));
-		assertEquals(c.mApplicationScopedClass,
+		assertNotNull(c.applicationScopedClass);
+		assertEquals(c.applicationScopedClass, Proton.getInjector(context1).getInstance(ApplicationScopedClass.class));
+		assertEquals(c.applicationScopedClass,
 				Proton.getInjector(new MockContext(mMockApplication)).getInstance(ApplicationScopedClass.class));
 	}
 
@@ -46,8 +46,8 @@ public class ApplicationScopedInjectionTest extends AndroidTestCase {
 	public void testInjectWithApplicationScoped() {
 		Client obj1 = Proton.getInjector(new MockContext(mMockApplication)).inject(new Client());
 		Client obj2 = Proton.getInjector(new MockContext(mMockApplication)).inject(new Client());
-		assertEquals(obj1.mApplicationScopedClass, obj2.mApplicationScopedClass);
-		assertEquals(obj1.mApplicationScopedClass, obj2.mApplicationScopedClassProvider.get());
+		assertEquals(obj1.applicationScopedClass, obj2.applicationScopedClass);
+		assertEquals(obj1.applicationScopedClass, obj2.applicationScopedClassProvider.get());
 	}
 
 	public void testGetInstanceWithIllegalApplicationScoped() {
@@ -61,10 +61,10 @@ public class ApplicationScopedInjectionTest extends AndroidTestCase {
 
 	public static class Client {
 		@Inject
-		private ApplicationScopedClass mApplicationScopedClass;
+		private ApplicationScopedClass applicationScopedClass;
 
 		@Inject
-		private Provider<ApplicationScopedClass> mApplicationScopedClassProvider;
+		private Provider<ApplicationScopedClass> applicationScopedClassProvider;
 	}
 
 	public static class ApplicationScopedClass {
@@ -76,6 +76,6 @@ public class ApplicationScopedInjectionTest extends AndroidTestCase {
 	public static class IllegalApplicationScopedClass {
 		@SuppressWarnings("unused")
 		@Inject
-		private ContextScopedClass mContextScopedClass;
+		private ContextScopedClass contextScopedClass;
 	}
 }
