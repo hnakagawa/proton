@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
@@ -25,6 +26,7 @@ import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
+import proton.inject.internal.provider.AccountManagerProvider;
 import proton.inject.internal.provider.ApplicationProvider;
 import proton.inject.internal.provider.ContextProvider;
 import proton.inject.internal.provider.HandlerProvider;
@@ -32,6 +34,9 @@ import proton.inject.internal.provider.SystemServiceProvider;
 
 public class DefaultModule implements Module {
 	private Bindings mBindings;
+
+	@SuppressWarnings("rawtypes")
+	private static final Class mAccountManagerClass = loadClass("android.accounts.AccountManager");
 
 	@Override
 	public final synchronized void configure(Bindings bindings) {
@@ -45,6 +50,15 @@ public class DefaultModule implements Module {
 		}
 	}
 
+	private static Class<?> loadClass(String className) {
+		try {
+			return Class.forName(className);
+		} catch (Throwable t) {
+			return null;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	protected void configure() {
 		bind(Application.class).toProvider(ApplicationProvider.class).in(ApplicationScoped.class);
 		bind(Context.class).toProvider(ContextProvider.class);
@@ -68,6 +82,9 @@ public class DefaultModule implements Module {
 		bind(Vibrator.class).toProvider(new SystemServiceProvider<Vibrator>(Context.VIBRATOR_SERVICE));
 		bind(WifiManager.class).toProvider(new SystemServiceProvider<WifiManager>(Context.WIFI_SERVICE));
 		bind(WindowManager.class).toProvider(new SystemServiceProvider<WindowManager>(Context.WINDOW_SERVICE));
+
+		if (VERSION.SDK_INT >= 5)
+			bind(mAccountManagerClass).toProvider(AccountManagerProvider.class);
 	}
 
 	protected <T> BindingBuilder<T> bind(Class<T> clazz) {
