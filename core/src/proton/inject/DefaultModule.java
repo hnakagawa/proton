@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
@@ -26,6 +27,7 @@ import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
 import proton.inject.internal.provider.ApplicationProvider;
 import proton.inject.internal.provider.ContextProvider;
+import proton.inject.internal.provider.HandlerProvider;
 import proton.inject.internal.provider.SystemServiceProvider;
 
 public class DefaultModule implements Module {
@@ -46,6 +48,7 @@ public class DefaultModule implements Module {
 	protected void configure() {
 		bind(Application.class).toProvider(ApplicationProvider.class).in(ApplicationScoped.class);
 		bind(Context.class).toProvider(ContextProvider.class);
+		bind(Handler.class).toProvider(HandlerProvider.class).in(ApplicationScoped.class);
 
 		bind(ActivityManager.class).toProvider(new SystemServiceProvider<ActivityManager>(Context.ACTIVITY_SERVICE));
 		bind(AlarmManager.class).toProvider(new SystemServiceProvider<AlarmManager>(Context.ALARM_SERVICE));
