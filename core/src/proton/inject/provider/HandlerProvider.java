@@ -1,4 +1,4 @@
-package proton.inject.internal.provider;
+package proton.inject.provider;
 
 import javax.inject.Provider;
 

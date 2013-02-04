@@ -26,11 +26,11 @@ import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
-import proton.inject.internal.provider.AccountManagerProvider;
-import proton.inject.internal.provider.ApplicationProvider;
-import proton.inject.internal.provider.ContextProvider;
-import proton.inject.internal.provider.HandlerProvider;
-import proton.inject.internal.provider.SystemServiceProvider;
+import proton.inject.provider.AccountManagerProvider;
+import proton.inject.provider.ApplicationProvider;
+import proton.inject.provider.ContextProvider;
+import proton.inject.provider.HandlerProvider;
+import proton.inject.provider.SystemServiceProvider;
 
 public class DefaultModule implements Module {
 	private Bindings mBindings;
