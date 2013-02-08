@@ -164,7 +164,7 @@ public class InjectorImpl implements Injector {
 						if (obj == null) {
 							obj = createInstance(constructor, types, requiredBy);
 							injectFields(obj, fields, requiredBy);
-							mProviderListeners.call(mContext, obj);
+							mProviderListeners.call(InjectorImpl.this, obj);
 						}
 					}
 				}
@@ -299,7 +299,7 @@ public class InjectorImpl implements Injector {
 					if (!isInjected) {
 						injectFields(mProvider, mFields, mProvider);
 						isInjected = true;
-						mProviderListeners.call(mContext, this);
+						mProviderListeners.call(InjectorImpl.this, this);
 					}
 				}
 			}

@@ -28,6 +28,8 @@ import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
 import proton.inject.listener.ProviderListener;
 import proton.inject.listener.ProviderListeners;
+import proton.inject.observer.ObserverManager;
+import proton.inject.observer.ObserverRegister;
 import proton.inject.provider.AccountManagerProvider;
 import proton.inject.provider.ApplicationProvider;
 import proton.inject.provider.ContextProvider;
@@ -92,6 +94,9 @@ public class DefaultModule implements Module {
 
 		if (VERSION.SDK_INT >= 5)
 			bind(mAccountManagerClass).toProvider(AccountManagerProvider.class);
+
+		bind(ObserverManager.class);
+		bindProviderListener(new ObserverRegister());
 	}
 
 	protected <T> BindingBuilder<T> bind(Class<T> clazz) {

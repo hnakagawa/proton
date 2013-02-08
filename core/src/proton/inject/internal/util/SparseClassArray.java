@@ -12,4 +12,8 @@ public class SparseClassArray<T> {
 	public T get(Class<?> key) {
 		return mArray.get(key.hashCode());
 	}
+
+	public void clear() {
+		mArray.clear();
+	}
 }

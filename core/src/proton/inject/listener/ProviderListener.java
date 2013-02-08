@@ -1,8 +1,8 @@
 package proton.inject.listener;
 
-import android.content.Context;
+import proton.inject.Injector;
 
 public interface ProviderListener {
 
-	public void onCreateInstance(Context context, Object instance);
+	public void onCreateInstance(Injector injector, Object instance);
 }
