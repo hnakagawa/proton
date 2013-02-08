@@ -2,8 +2,8 @@ package proton.inject.binding.binding;
 
 import javax.inject.Provider;
 
-import proton.inject.annotation.ApplicationScoped;
-import proton.inject.annotation.Dependent;
+import proton.inject.scope.ApplicationScoped;
+import proton.inject.scope.Dependent;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.Binding;
 

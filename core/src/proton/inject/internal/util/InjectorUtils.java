@@ -7,9 +7,9 @@ import java.lang.reflect.Type;
 
 import javax.inject.Provider;
 
-import proton.inject.annotation.ApplicationScoped;
-import proton.inject.annotation.ContextScoped;
-import proton.inject.annotation.Dependent;
+import proton.inject.scope.ApplicationScoped;
+import proton.inject.scope.ContextScoped;
+import proton.inject.scope.Dependent;
 
 public final class InjectorUtils {
 	private InjectorUtils() {

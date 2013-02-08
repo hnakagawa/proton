@@ -16,13 +16,13 @@ import android.app.Application;
 import android.content.Context;
 import proton.inject.Injector;
 import proton.inject.ProvisionException;
-import proton.inject.annotation.ApplicationScoped;
-import proton.inject.annotation.Dependent;
 import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
 import proton.inject.internal.util.InjectorUtils;
 import proton.inject.internal.util.SparseClassArray;
 import proton.inject.listener.ProviderListeners;
+import proton.inject.scope.ApplicationScoped;
+import proton.inject.scope.Dependent;
 
 public class InjectorImpl implements Injector {
 	private static final Object LOCK = new Object();

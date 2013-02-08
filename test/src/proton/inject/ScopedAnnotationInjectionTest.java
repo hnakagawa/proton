@@ -2,9 +2,9 @@ package proton.inject;
 
 import javax.inject.Inject;
 
-import proton.inject.annotation.ApplicationScoped;
-import proton.inject.annotation.ContextScoped;
-import proton.inject.annotation.Dependent;
+import proton.inject.scope.ApplicationScoped;
+import proton.inject.scope.ContextScoped;
+import proton.inject.scope.Dependent;
 
 import android.app.Application;
 import android.test.AndroidTestCase;

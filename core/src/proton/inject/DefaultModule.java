@@ -22,7 +22,6 @@ import android.telephony.TelephonyManager;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import proton.inject.annotation.ApplicationScoped;
 import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.Binding;
@@ -34,6 +33,7 @@ import proton.inject.provider.ApplicationProvider;
 import proton.inject.provider.ContextProvider;
 import proton.inject.provider.HandlerProvider;
 import proton.inject.provider.SystemServiceProvider;
+import proton.inject.scope.ApplicationScoped;
 
 public class DefaultModule implements Module {
 	private Bindings mBindings;

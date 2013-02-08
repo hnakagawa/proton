@@ -3,7 +3,7 @@ package proton.inject;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import proton.inject.annotation.ApplicationScoped;
+import proton.inject.scope.ApplicationScoped;
 
 import android.app.Application;
 import android.content.Context;

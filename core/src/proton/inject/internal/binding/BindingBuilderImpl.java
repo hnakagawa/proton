@@ -6,10 +6,10 @@ import javax.inject.Provider;
 
 import static proton.inject.internal.util.Validator.checkNotNull;
 
-import proton.inject.annotation.ApplicationScoped;
-import proton.inject.annotation.ContextScoped;
-import proton.inject.annotation.Dependent;
 import proton.inject.internal.util.InjectorUtils;
+import proton.inject.scope.ApplicationScoped;
+import proton.inject.scope.ContextScoped;
+import proton.inject.scope.Dependent;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	private final Binding<T> mBinding;
