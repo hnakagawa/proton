@@ -2,6 +2,8 @@ package proton.inject;
 
 import javax.inject.Provider;
 
+import proton.inject.listener.ProviderListeners;
+
 import android.content.Context;
 
 public interface Injector {
@@ -14,4 +16,6 @@ public interface Injector {
 	public Injector getApplicationInjector();
 
 	public Context getContext();
+
+	public ProviderListeners getProviderListeners();
 }

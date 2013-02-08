@@ -2,6 +2,10 @@ package proton.inject;
 
 import javax.inject.Inject;
 
+import proton.inject.annotation.ApplicationScoped;
+import proton.inject.annotation.ContextScoped;
+import proton.inject.annotation.Dependent;
+
 import android.app.Application;
 import android.test.AndroidTestCase;
 import android.test.mock.MockApplication;

@@ -14,14 +14,15 @@ import javax.inject.Provider;
 
 import android.app.Application;
 import android.content.Context;
-import proton.inject.ApplicationScoped;
-import proton.inject.Dependent;
 import proton.inject.Injector;
 import proton.inject.ProvisionException;
+import proton.inject.annotation.ApplicationScoped;
+import proton.inject.annotation.Dependent;
 import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
 import proton.inject.internal.util.InjectorUtils;
 import proton.inject.internal.util.SparseClassArray;
+import proton.inject.listener.ProviderListeners;
 
 public class InjectorImpl implements Injector {
 	private static final Object LOCK = new Object();
@@ -30,6 +31,7 @@ public class InjectorImpl implements Injector {
 	private final InjectorImpl mApplicationInjector;
 
 	private final Bindings mBindings;
+	private final ProviderListeners mProviderListeners;
 	private final SparseClassArray<Provider<?>> mProviders = new SparseClassArray<Provider<?>>();
 	private final Queue<Required> mTraversalQueue = new ArrayDeque<Required>();
 
@@ -40,10 +42,17 @@ public class InjectorImpl implements Injector {
 		}
 	};
 
-	public InjectorImpl(Context context, Bindings bindings, InjectorImpl applicationInjector) {
+	public InjectorImpl(Context context, Bindings bindings, ProviderListeners providerListeners,
+			InjectorImpl applicationInjector) {
 		mContext = context;
 		mBindings = bindings;
+		mProviderListeners = providerListeners;
 		mApplicationInjector = applicationInjector;
+	}
+
+	@Override
+	public ProviderListeners getProviderListeners() {
+		return mProviderListeners;
 	}
 
 	@Override
@@ -90,9 +99,9 @@ public class InjectorImpl implements Injector {
 	@Override
 	public <T> T inject(T obj) {
 		synchronized (LOCK) {
-			Field[] fields = getFielsAddTraversal(obj.getClass());
+			Field[] fields = getFieldsAndAddTraversal(obj.getClass());
 			pollTraversalQueue();
-			setFields(obj, fields, obj);
+			injectFields(obj, fields, obj);
 			return obj;
 		}
 	}
@@ -124,10 +133,10 @@ public class InjectorImpl implements Injector {
 		if (required.key == Injector.class)
 			provider = mInjectorProvdier;
 		else if (required.binding != null && (provider = required.binding.getProvider()) != null) {
-			provider = new ApplicationProvider(provider, getFielsAddTraversal(provider.getClass()));
+			provider = new ApplicationProvider(provider, getFieldsAndAddTraversal(provider.getClass()));
 		} else {
 			Class<?> clazz = (Class<?>) (required.binding != null ? required.binding.getToClass() : required.key);
-			Field[] fields = getFielsAddTraversal(clazz);
+			Field[] fields = getFieldsAndAddTraversal(clazz);
 
 			Constructor<?> constructor = getConstructor(clazz, required.requiredBy);
 			Type[] types = constructor.getGenericParameterTypes();
@@ -154,7 +163,8 @@ public class InjectorImpl implements Injector {
 					synchronized (this) {
 						if (obj == null) {
 							obj = createInstance(constructor, types, requiredBy);
-							setFields(obj, fields, requiredBy);
+							injectFields(obj, fields, requiredBy);
+							mProviderListeners.call(mContext, obj);
 						}
 					}
 				}
@@ -181,7 +191,7 @@ public class InjectorImpl implements Injector {
 		}
 	}
 
-	private void setFields(Object receiver, Field[] fields, Object requiredBy) {
+	private void injectFields(Object receiver, Field[] fields, Object requiredBy) {
 		try {
 			for (int i = 0; i < fields.length; i++) {
 				Object value = getValueOrProvider(fields[i].getType(), fields[i].getGenericType(), requiredBy);
@@ -197,7 +207,7 @@ public class InjectorImpl implements Injector {
 		return Provider.class.isAssignableFrom(clazz) ? provider : provider.get();
 	}
 
-	private Field[] getFielsAddTraversal(Class<?> clazz) {
+	private Field[] getFieldsAndAddTraversal(Class<?> clazz) {
 		List<Field> fieldsList = new ArrayList<Field>();
 		for (Class<?> c = clazz; c != Object.class; c = c.getSuperclass()) {
 			for (Field field : c.getDeclaredFields()) {
@@ -287,8 +297,9 @@ public class InjectorImpl implements Injector {
 			if (!isInjected) {
 				synchronized (this) {
 					if (!isInjected) {
-						setFields(mProvider, mFields, mProvider);
+						injectFields(mProvider, mFields, mProvider);
 						isInjected = true;
+						mProviderListeners.call(mContext, this);
 					}
 				}
 			}

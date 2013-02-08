@@ -6,7 +6,7 @@ import proton.inject.internal.util.SparseClassArray;
 public class Bindings {
 	private SparseClassArray<Binding<?>> mBindings = new SparseClassArray<Binding<?>>();
 
-	public <T> void add(Binding<T> binding) {
+	public <T> void register(Binding<T> binding) {
 		Class<T> key = binding.getBindClass();
 		if (mBindings.get(key) != null)
 			throw new ConfigurationException(key.getName() + " was already configured");

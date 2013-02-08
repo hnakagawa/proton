@@ -6,9 +6,9 @@ import javax.inject.Provider;
 
 import static proton.inject.internal.util.Validator.checkNotNull;
 
-import proton.inject.ApplicationScoped;
-import proton.inject.ContextScoped;
-import proton.inject.Dependent;
+import proton.inject.annotation.ApplicationScoped;
+import proton.inject.annotation.ContextScoped;
+import proton.inject.annotation.Dependent;
 import proton.inject.internal.util.InjectorUtils;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {

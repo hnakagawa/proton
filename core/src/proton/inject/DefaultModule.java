@@ -22,10 +22,13 @@ import android.telephony.TelephonyManager;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import proton.inject.annotation.ApplicationScoped;
 import proton.inject.internal.binding.BindingBuilder;
 import proton.inject.internal.binding.BindingBuilderImpl;
 import proton.inject.internal.binding.Binding;
 import proton.inject.internal.binding.Bindings;
+import proton.inject.listener.ProviderListener;
+import proton.inject.listener.ProviderListeners;
 import proton.inject.provider.AccountManagerProvider;
 import proton.inject.provider.ApplicationProvider;
 import proton.inject.provider.ContextProvider;
@@ -34,18 +37,22 @@ import proton.inject.provider.SystemServiceProvider;
 
 public class DefaultModule implements Module {
 	private Bindings mBindings;
+	private ProviderListeners mProviderListeners;
 
 	@SuppressWarnings("rawtypes")
 	private static final Class mAccountManagerClass = loadClass("android.accounts.AccountManager");
 
 	@Override
-	public final synchronized void configure(Bindings bindings) {
+	public final synchronized void configure(Bindings bindings, ProviderListeners providerListeners) {
 		checkState(mBindings == null, "Re-entry is not allowed.");
 
 		mBindings = checkNotNull(bindings, "bindings");
+		mProviderListeners = checkNotNull(providerListeners, "providerListeners");
+
 		try {
 			configure();
 		} finally {
+			mProviderListeners = null;
 			mBindings = null;
 		}
 	}
@@ -90,7 +97,11 @@ public class DefaultModule implements Module {
 	protected <T> BindingBuilder<T> bind(Class<T> clazz) {
 		checkState(mBindings != null, "The Bindings can only be used inside configure()");
 		Binding<T> binding = new Binding<T>(clazz);
-		mBindings.add(binding);
+		mBindings.register(binding);
 		return new BindingBuilderImpl<T>(binding);
+	}
+
+	protected void bindProviderListener(ProviderListener providerListener) {
+		mProviderListeners.register(providerListener);
 	}
 }

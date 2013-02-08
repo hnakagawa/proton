@@ -1,4 +1,4 @@
-package proton.inject;
+package proton.inject.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
