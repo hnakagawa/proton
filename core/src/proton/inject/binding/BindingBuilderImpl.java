@@ -1,11 +1,12 @@
-package proton.inject.internal.binding;
+package proton.inject.binding;
 
 import java.lang.annotation.Annotation;
 
 import javax.inject.Provider;
 
-import static proton.inject.internal.util.Validator.checkNotNull;
+import android.os.Build;
 
+import proton.inject.ConfigurationException;
 import proton.inject.internal.util.InjectorUtils;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.ContextScoped;
@@ -13,18 +14,25 @@ import proton.inject.scope.Dependent;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	private final Binding<T> mBinding;
+	private final Bindings mBindings;
 
-	public BindingBuilderImpl(Binding<T> binding) {
-		mBinding = binding;
-		Class<?> clazz = binding.getBindClass();
-		if (!InjectorUtils.isAbstract(clazz))
+	public BindingBuilderImpl(Class<T> clazz, Bindings bindings) {
+		mBinding = new Binding<T>(clazz);
+		mBindings = bindings;
+
+		mBindings.register(mBinding);
+
+		if (!InjectorUtils.isAbstract(clazz)) {
 			setScope(clazz);
+			validateAnnotation(clazz);
+		}
 	}
 
 	@Override
 	public ScopedBuilder to(Class<? extends T> to) {
 		mBinding.setToClass(checkNotNull(to, "to"));
 		setScope(to);
+		validateAnnotation(to);
 		return this;
 	}
 
@@ -32,6 +40,7 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	public ScopedBuilder toProvider(Class<? extends Provider<T>> provider) {
 		mBinding.setProviderClass(checkNotNull(provider, "provider"));
 		setScope(InjectorUtils.toActualClass(provider));
+		validateAnnotation(provider);
 		return this;
 	}
 
@@ -39,6 +48,7 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	public void toProvider(Provider<T> provider) {
 		mBinding.setProvider(checkNotNull(provider, "provider"));
 		mBinding.setScope(ApplicationScoped.class);
+		validateAnnotation(provider.getClass());
 	}
 
 	@Override
@@ -52,5 +62,21 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 				|| (ann = clazz.getAnnotation(Dependent.class)) != null
 				|| (ann = clazz.getAnnotation(ContextScoped.class)) != null)
 			mBinding.setScope(ann.annotationType());
+	}
+
+	private void validateAnnotation(Class<?> clazz) {
+		AndroidVersion version = clazz.getAnnotation(AndroidVersion.class);
+		if (version != null && Build.VERSION.SDK_INT < version.value())
+			mBindings.unregister(mBinding);
+
+		DeviceModel model = clazz.getAnnotation(DeviceModel.class);
+		if (model != null && !Build.MODEL.equals(model.value()))
+			mBindings.unregister(mBinding);
+	}
+
+	private <I> I checkNotNull(I obj, String msg) {
+		if (obj == null)
+			throw new ConfigurationException(msg);
+		return obj;
 	}
 }

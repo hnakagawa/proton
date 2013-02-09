@@ -1,17 +1,16 @@
-package proton.inject.internal.binding;
+package proton.inject.binding;
 
-import proton.inject.ConfigurationException;
 import proton.inject.internal.util.SparseClassArray;
 
 public class Bindings {
 	private SparseClassArray<Binding<?>> mBindings = new SparseClassArray<Binding<?>>();
 
 	public <T> void register(Binding<T> binding) {
-		Class<T> key = binding.getBindClass();
-		if (mBindings.get(key) != null)
-			throw new ConfigurationException(key.getName() + " was already configured");
+		mBindings.put(binding.getBindClass(), binding);
+	}
 
-		mBindings.put(binding.getToClass(), binding);
+	public <T> void unregister(Binding<T> binding) {
+		mBindings.remove(binding.getBindClass());
 	}
 
 	@SuppressWarnings("unchecked")

@@ -22,10 +22,9 @@ import android.telephony.TelephonyManager;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import proton.inject.internal.binding.BindingBuilder;
-import proton.inject.internal.binding.BindingBuilderImpl;
-import proton.inject.internal.binding.Binding;
-import proton.inject.internal.binding.Bindings;
+import proton.inject.binding.BindingBuilder;
+import proton.inject.binding.BindingBuilderImpl;
+import proton.inject.binding.Bindings;
 import proton.inject.listener.ProviderListener;
 import proton.inject.listener.ProviderListeners;
 import proton.inject.observer.ObserverManager;
@@ -101,9 +100,7 @@ public class DefaultModule implements Module {
 
 	protected <T> BindingBuilder<T> bind(Class<T> clazz) {
 		checkState(mBindings != null, "The Bindings can only be used inside configure()");
-		Binding<T> binding = new Binding<T>(clazz);
-		mBindings.register(binding);
-		return new BindingBuilderImpl<T>(binding);
+		return new BindingBuilderImpl<T>(clazz, mBindings);
 	}
 
 	protected void bindProviderListener(ProviderListener providerListener) {

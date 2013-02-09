@@ -1,4 +1,4 @@
-package proton.inject.internal.binding;
+package proton.inject.binding;
 
 import java.lang.annotation.Annotation;
 

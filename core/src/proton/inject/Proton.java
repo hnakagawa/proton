@@ -7,8 +7,8 @@ import static proton.inject.internal.util.Validator.checkNotNull;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import proton.inject.binding.Bindings;
 import proton.inject.internal.InjectorImpl;
-import proton.inject.internal.binding.Bindings;
 import proton.inject.listener.ProviderListeners;
 
 import android.app.Application;

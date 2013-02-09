@@ -2,98 +2,123 @@ package proton.inject.binding.binding;
 
 import javax.inject.Provider;
 
+import proton.inject.ConfigurationException;
+import proton.inject.binding.AndroidVersion;
+import proton.inject.binding.BindingBuilderImpl;
+import proton.inject.binding.Bindings;
+import proton.inject.binding.DeviceModel;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.Dependent;
-import proton.inject.internal.binding.BindingBuilderImpl;
-import proton.inject.internal.binding.Binding;
 
 import android.test.AndroidTestCase;
 
 public class BindingBuilderImplTest extends AndroidTestCase {
+	private Bindings mBindings;
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		mBindings = new Bindings();
+	}
 
 	public void testTo() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
-		assertEquals(Aaa.class, b.getToClass());
-		new BindingBuilderImpl<Aaa>(b).to(AaaImpl.class);
-		assertEquals(AaaImpl.class, b.getToClass());
+		new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).to(AaaImpl.class);
+		assertEquals(AaaImpl.class, mBindings.get(Aaa.class).getToClass());
+	}
+
+	public void testToWithVersionAnnotation() {
+		new BindingBuilderImpl<Bbb>(Bbb.class, mBindings).to(BbbImpl.class);
+		assertNull(mBindings.get(Bbb.class));
+	}
+
+	public void testToWithModelAnnotation() {
+		new BindingBuilderImpl<Ccc>(Ccc.class, mBindings).to(CccImpl.class);
+		assertNull(mBindings.get(Ccc.class));
 	}
 
 	public void testToWithNull() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
 		try {
-			new BindingBuilderImpl<Aaa>(b).to(null);
+			new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).to(null);
 			fail();
-		} catch (IllegalStateException exp) {
+		} catch (ConfigurationException exp) {
 		}
 	}
 
 	public void testToWithScopeAnnotation() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
-		new BindingBuilderImpl<Aaa>(b).to(AaaImpl.class);
-		assertEquals(ApplicationScoped.class, b.getScope());
+		new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).to(AaaImpl.class);
+		assertEquals(ApplicationScoped.class, mBindings.get(Aaa.class).getScope());
 	}
 
 	public void testToProviderClassOfQextendsProviderOfT() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
-		new BindingBuilderImpl<Aaa>(b).toProvider(AaaProvider.class);
-		assertEquals(Dependent.class, b.getScope());
+		new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).toProvider(AaaProvider.class);
+		assertEquals(Dependent.class, mBindings.get(Aaa.class).getScope());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testToProviderClassWithNull() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
 		try {
-			new BindingBuilderImpl<Aaa>(b).toProvider((Class) null);
+			new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).toProvider((Class) null);
 			fail();
-		} catch (IllegalStateException exp) {
+		} catch (ConfigurationException exp) {
 		}
 	}
 
 	public void testToProviderProviderOfT() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
 		Provider<Aaa> p = new AaaProvider();
-		new BindingBuilderImpl<Aaa>(b).toProvider(p);
-		assertEquals(b.getProvider(), p);
+		new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).toProvider(p);
+		assertEquals(p, mBindings.get(Aaa.class).getProvider());
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testToProviderWithNull() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
 		try {
-			new BindingBuilderImpl<Aaa>(b).toProvider((Provider) null);
+			new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).toProvider((Provider) null);
 			fail();
-		} catch (IllegalStateException exp) {
+		} catch (ConfigurationException exp) {
 		}
 	}
 
 	public void testIn() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
-		assertNull(b.getScope());
-		new BindingBuilderImpl<Aaa>(b).in(ApplicationScoped.class);
-		assertEquals(ApplicationScoped.class, b.getScope());
+		new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).in(ApplicationScoped.class);
+		assertEquals(ApplicationScoped.class, mBindings.get(Aaa.class).getScope());
 	}
 
 	public void testInWithNull() {
-		Binding<Aaa> b = new Binding<BindingBuilderImplTest.Aaa>(Aaa.class);
 		try {
-			new BindingBuilderImpl<Aaa>(b).in(null);
+			new BindingBuilderImpl<Aaa>(Aaa.class, mBindings).in(null);
 			fail();
-		} catch (IllegalStateException exp) {
+		} catch (ConfigurationException exp) {
 		}
 	}
 
-	public static interface Aaa {
+	public interface Aaa {
 	}
 
 	@ApplicationScoped
+	@AndroidVersion(0)
 	public static class AaaImpl implements Aaa {
 	}
 
 	@Dependent
+	@AndroidVersion(0)
 	public static class AaaProvider implements Provider<Aaa> {
 		@Override
 		public Aaa get() {
 			return new AaaImpl();
 		}
+	}
+
+	public interface Bbb {
+	}
+
+	@AndroidVersion(100)
+	public static class BbbImpl implements Bbb {
+	}
+
+	public interface Ccc {
+	}
+
+	@DeviceModel("aaa")
+	public static class CccImpl implements Ccc {
 	}
 }

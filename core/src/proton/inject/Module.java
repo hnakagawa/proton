@@ -1,6 +1,6 @@
 package proton.inject;
 
-import proton.inject.internal.binding.Bindings;
+import proton.inject.binding.Bindings;
 import proton.inject.listener.ProviderListeners;
 
 public interface Module {

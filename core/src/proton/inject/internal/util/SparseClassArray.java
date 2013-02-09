@@ -13,6 +13,10 @@ public class SparseClassArray<T> {
 		return mArray.get(key.hashCode());
 	}
 
+	public void remove(Class<?> key) {
+		mArray.remove(key.hashCode());
+	}
+
 	public void clear() {
 		mArray.clear();
 	}
