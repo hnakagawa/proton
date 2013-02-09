@@ -4,6 +4,7 @@ import proton.inject.DefaultModule;
 import proton.inject.Injector;
 import proton.inject.MockContext;
 import proton.inject.Proton;
+import proton.inject.observer.event.OnCreateEvent;
 import android.app.Application;
 import android.test.AndroidTestCase;
 import android.test.mock.MockApplication;
@@ -36,18 +37,15 @@ public class ObserverTest extends AndroidTestCase {
 	public void testFire() {
 		ObserverManager manager = mInjector.getInstance(ObserverManager.class);
 		Observer observer = mInjector.getInstance(Observer.class);
-		Event event = new Event();
+		OnCreateEvent event = new OnCreateEvent(null);
 		manager.fire(event);
 		assertEquals(event, observer.event);
 	}
 
-	public static class Event {
-	}
-
 	public static class Observer {
-		private Event event;
+		private OnCreateEvent event;
 
-		public void handle(@Observes Event event) {
+		public void handle(@Observes OnCreateEvent event) {
 			this.event = event;
 		}
 	}

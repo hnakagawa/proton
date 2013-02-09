@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 
 import android.app.Application;
@@ -211,7 +212,7 @@ public class InjectorImpl implements Injector {
 		List<Field> fieldsList = new ArrayList<Field>();
 		for (Class<?> c = clazz; c != Object.class; c = c.getSuperclass()) {
 			for (Field field : c.getDeclaredFields()) {
-				if (field.getAnnotation(javax.inject.Inject.class) == null)
+				if (field.getAnnotation(Inject.class) == null)
 					continue;
 
 				field.setAccessible(true);
@@ -226,7 +227,7 @@ public class InjectorImpl implements Injector {
 	private Constructor<?> getConstructor(Class<?> clazz, Object requiredBy) {
 		Constructor<?> constructor = null;
 		for (Constructor<?> c : clazz.getDeclaredConstructors()) {
-			if (c.getAnnotation(javax.inject.Inject.class) == null)
+			if (c.getAnnotation(Inject.class) == null)
 				continue;
 
 			if (constructor != null)

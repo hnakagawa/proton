@@ -3,7 +3,7 @@ Proton
 
 A lightweight dependency injection framework for Android.
 
-Inspired by MiniGuice
+Inspired by MiniGuice and RoboGuice
 
 
 Todo
