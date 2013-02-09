@@ -9,7 +9,6 @@ Inspired by MiniGuice and RoboGuice
 Todo
 ------
 +   エラーメッセージを分かりやすくする
-+   Activity等のラッパークラス
 +   テストユーティリティ
 
 License

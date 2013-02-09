@@ -9,7 +9,6 @@ Inspired by MiniGuice and RoboGuice
 Todo
 -----
 +   Clarity error messages
-+   Context wrapper class, e.g. Activity, Service
 +   Test utility
 
 
