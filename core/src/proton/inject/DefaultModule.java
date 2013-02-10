@@ -16,7 +16,6 @@ import android.location.LocationManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.os.Build.VERSION;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
@@ -98,8 +97,7 @@ public class DefaultModule implements Module {
 		bind(WifiManager.class).toProvider(new SystemServiceProvider<WifiManager>(Context.WIFI_SERVICE));
 		bind(WindowManager.class).toProvider(new SystemServiceProvider<WindowManager>(Context.WINDOW_SERVICE));
 
-		if (VERSION.SDK_INT >= 5)
-			bind(mAccountManagerClass).toProvider(AccountManagerProvider.class);
+		bind(mAccountManagerClass).toProvider(AccountManagerProvider.class);
 
 		bind(ObserverManager.class);
 		bindProviderListener(new ObserverRegister());
