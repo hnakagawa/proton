@@ -15,9 +15,12 @@ public class ProviderListeners {
 	}
 
 	public void call(Injector injector, Object obj) {
+		ProviderListener[] listeners;
 		synchronized (this) {
-			for (ProviderListener listener : mListeners)
-				listener.onCreateInstance(injector, obj);
+			listeners = mListeners.toArray(new ProviderListener[mListeners.size()]);
 		}
+
+		for (ProviderListener listener : listeners)
+			listener.onCreateInstance(injector, obj);
 	}
 }

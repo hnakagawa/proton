@@ -1,8 +1,10 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
 import java.lang.reflect.Field;
 
 import javax.inject.Provider;
+
+import proton.inject.util.InjectorUtils;
 
 import android.test.AndroidTestCase;
 

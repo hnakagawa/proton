@@ -3,7 +3,6 @@ package proton.inject.internal;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -19,11 +18,12 @@ import proton.inject.Injector;
 import proton.inject.ProvisionException;
 import proton.inject.binding.Binding;
 import proton.inject.binding.Bindings;
-import proton.inject.internal.util.InjectorUtils;
-import proton.inject.internal.util.SparseClassArray;
+import proton.inject.listener.FieldListeners;
 import proton.inject.listener.ProviderListeners;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.Dependent;
+import proton.inject.util.InjectorUtils;
+import proton.inject.util.SparseClassArray;
 
 public class InjectorImpl implements Injector {
 	private static final Object LOCK = new Object();
@@ -33,6 +33,8 @@ public class InjectorImpl implements Injector {
 
 	private final Bindings mBindings;
 	private final ProviderListeners mProviderListeners;
+	private final FieldListeners mFieldListeners;
+
 	private final SparseClassArray<Provider<?>> mProviders = new SparseClassArray<Provider<?>>();
 	private final Queue<Required> mTraversalQueue = new ArrayDeque<Required>();
 
@@ -44,10 +46,11 @@ public class InjectorImpl implements Injector {
 	};
 
 	public InjectorImpl(Context context, Bindings bindings, ProviderListeners providerListeners,
-			InjectorImpl applicationInjector) {
+			FieldListeners fieldListeners, InjectorImpl applicationInjector) {
 		mContext = context;
 		mBindings = bindings;
 		mProviderListeners = providerListeners;
+		mFieldListeners = fieldListeners;
 		mApplicationInjector = applicationInjector;
 	}
 
@@ -99,12 +102,13 @@ public class InjectorImpl implements Injector {
 
 	@Override
 	public <T> T inject(T obj) {
+		Field[] fields;
 		synchronized (LOCK) {
-			Field[] fields = getFieldsAndAddTraversal(obj.getClass());
+			fields = getFieldsAndAddTraversal(obj.getClass());
 			pollTraversalQueue();
-			injectFields(obj, fields, obj);
-			return obj;
 		}
+		injectFields(obj, fields, obj);
+		return obj;
 	}
 
 	@Override
@@ -181,25 +185,17 @@ public class InjectorImpl implements Injector {
 		for (int i = 0; i < args.length; i++)
 			args[i] = getValueOrProvider(params[i], types[i], requiredBy);
 
-		try {
-			return constructor.newInstance(args);
-		} catch (IllegalAccessException exp) {
-			throw new ProvisionException(exp);
-		} catch (InvocationTargetException exp) {
-			throw new ProvisionException(exp);
-		} catch (InstantiationException exp) {
-			throw new ProvisionException(exp);
-		}
+		return InjectorUtils.newInstance(constructor, args);
 	}
 
 	private void injectFields(Object receiver, Field[] fields, Object requiredBy) {
-		try {
-			for (int i = 0; i < fields.length; i++) {
-				Object value = getValueOrProvider(fields[i].getType(), fields[i].getGenericType(), requiredBy);
-				fields[i].set(receiver, value);
+		for (Field field : fields) {
+			if (field.getAnnotation(Inject.class) != null) {
+				Object value = getValueOrProvider(field.getType(), field.getGenericType(), requiredBy);
+				InjectorUtils.setField(receiver, field, value);
 			}
-		} catch (IllegalAccessException exp) {
-			throw new ProvisionException(exp);
+
+			mFieldListeners.call(this, receiver, field);
 		}
 	}
 
@@ -212,12 +208,14 @@ public class InjectorImpl implements Injector {
 		List<Field> fieldsList = new ArrayList<Field>();
 		for (Class<?> c = clazz; c != Object.class; c = c.getSuperclass()) {
 			for (Field field : c.getDeclaredFields()) {
-				if (field.getAnnotation(Inject.class) == null)
+				boolean isNoInject;
+				if ((isNoInject = field.getAnnotation(Inject.class) == null) && !mFieldListeners.hasListener(field))
 					continue;
 
 				field.setAccessible(true);
 				fieldsList.add(field);
-				addTraversal(field.getGenericType(), field);
+				if (!isNoInject)
+					addTraversal(field.getGenericType(), field);
 			}
 		}
 

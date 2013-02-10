@@ -1,7 +1,9 @@
 package proton.inject;
 
-import static proton.inject.internal.util.Validator.checkNotNull;
-import static proton.inject.internal.util.Validator.checkState;
+import static proton.inject.util.Validator.checkNotNull;
+import static proton.inject.util.Validator.checkState;
+
+import java.lang.annotation.Annotation;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
@@ -25,6 +27,8 @@ import android.view.inputmethod.InputMethodManager;
 import proton.inject.binding.BindingBuilder;
 import proton.inject.binding.BindingBuilderImpl;
 import proton.inject.binding.Bindings;
+import proton.inject.listener.FieldListener;
+import proton.inject.listener.FieldListeners;
 import proton.inject.listener.ProviderListener;
 import proton.inject.listener.ProviderListeners;
 import proton.inject.observer.ObserverManager;
@@ -39,16 +43,19 @@ import proton.inject.scope.ApplicationScoped;
 public class DefaultModule implements Module {
 	private Bindings mBindings;
 	private ProviderListeners mProviderListeners;
+	private FieldListeners mFieldListeners;
 
 	@SuppressWarnings("rawtypes")
 	private static final Class mAccountManagerClass = loadClass("android.accounts.AccountManager");
 
 	@Override
-	public final synchronized void configure(Bindings bindings, ProviderListeners providerListeners) {
+	public final synchronized void configure(Bindings bindings, ProviderListeners providerListeners,
+			FieldListeners fieldListeners) {
 		checkState(mBindings == null, "Re-entry is not allowed.");
 
 		mBindings = checkNotNull(bindings, "bindings");
 		mProviderListeners = checkNotNull(providerListeners, "providerListeners");
+		mFieldListeners = checkNotNull(fieldListeners, "fieldListeners");
 
 		try {
 			configure();
@@ -105,5 +112,9 @@ public class DefaultModule implements Module {
 
 	protected void bindProviderListener(ProviderListener providerListener) {
 		mProviderListeners.register(providerListener);
+	}
+
+	protected void bindFieldListener(Class<? extends Annotation> annClass, FieldListener fieldListener) {
+		mFieldListeners.register(annClass, fieldListener);
 	}
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import proton.inject.InvocationException;
-import proton.inject.internal.util.SparseClassArray;
+import proton.inject.util.SparseClassArray;
 
 public class ObserverManager {
 	private SparseClassArray<List<Observer>> mObservers = new SparseClassArray<List<Observer>>();

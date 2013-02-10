@@ -1,6 +1,6 @@
 package proton.inject.binding;
 
-import proton.inject.internal.util.SparseClassArray;
+import proton.inject.util.SparseClassArray;
 
 public class Bindings {
 	private SparseClassArray<Binding<?>> mBindings = new SparseClassArray<Binding<?>>();

@@ -1,5 +1,6 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
+import proton.inject.util.SparseClassArray;
 import android.test.AndroidTestCase;
 
 public class SparseClassArrayTest extends AndroidTestCase {

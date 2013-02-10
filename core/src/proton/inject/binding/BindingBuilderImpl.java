@@ -7,10 +7,10 @@ import javax.inject.Provider;
 import android.os.Build;
 
 import proton.inject.ConfigurationException;
-import proton.inject.internal.util.InjectorUtils;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.ContextScoped;
 import proton.inject.scope.Dependent;
+import proton.inject.util.InjectorUtils;
 
 public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	private final Binding<T> mBinding;

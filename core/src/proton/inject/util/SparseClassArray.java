@@ -1,4 +1,4 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
 import android.util.SparseArray;
 

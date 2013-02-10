@@ -1,14 +1,14 @@
 package proton.inject;
 
-import static proton.inject.internal.util.Validator.checkState;
-
-import static proton.inject.internal.util.Validator.checkNotNull;
+import static proton.inject.util.Validator.checkNotNull;
+import static proton.inject.util.Validator.checkState;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
 import proton.inject.binding.Bindings;
 import proton.inject.internal.InjectorImpl;
+import proton.inject.listener.FieldListeners;
 import proton.inject.listener.ProviderListeners;
 
 import android.app.Application;
@@ -17,7 +17,8 @@ import android.content.Context;
 public final class Proton {
 	private static Map<Context, InjectorImpl> sInjectors;
 	private static Bindings sBindings;
-	private static ProviderListeners sFieldInjectionListeners;
+	private static ProviderListeners sProviderListeners;
+	private static FieldListeners sFieldListeners;
 
 	private Proton() {
 	}
@@ -31,11 +32,12 @@ public final class Proton {
 			checkState(sInjectors == null, "Already initialized Proton");
 			sInjectors = new WeakHashMap<Context, InjectorImpl>();
 			sBindings = new Bindings();
-			sFieldInjectionListeners = new ProviderListeners();
+			sProviderListeners = new ProviderListeners();
+			sFieldListeners = new FieldListeners();
 
-			module.configure(sBindings, sFieldInjectionListeners);
+			module.configure(sBindings, sProviderListeners, sFieldListeners);
 
-			InjectorImpl injector = new InjectorImpl(app, sBindings, sFieldInjectionListeners, null);
+			InjectorImpl injector = new InjectorImpl(app, sBindings, sProviderListeners, sFieldListeners, null);
 			sInjectors.put(app, injector);
 		}
 	}
@@ -48,7 +50,7 @@ public final class Proton {
 				injector = sInjectors.get(context);
 				if (injector == null) {
 					InjectorImpl parent = sInjectors.get(context.getApplicationContext());
-					injector = new InjectorImpl(context, sBindings, sFieldInjectionListeners, parent);
+					injector = new InjectorImpl(context, sBindings, sProviderListeners, sFieldListeners, parent);
 					sInjectors.put(context, injector);
 				}
 			}
@@ -59,7 +61,7 @@ public final class Proton {
 	public static void destroy() {
 		synchronized (Proton.class) {
 			checkInitialize();
-			sFieldInjectionListeners = null;
+			sProviderListeners = null;
 			sBindings = null;
 			sInjectors = null;
 		}

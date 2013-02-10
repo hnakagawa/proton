@@ -1,4 +1,4 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
 public class Validator {
 	public static void checkState(boolean state, String msg) {

@@ -1,12 +1,16 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import javax.inject.Provider;
 
+import proton.inject.ProvisionException;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.ContextScoped;
 import proton.inject.scope.Dependent;
@@ -36,5 +40,25 @@ public final class InjectorUtils {
 
 		}
 		return ContextScoped.class;
+	}
+
+	public static void setField(Object receiver, Field field, Object value) {
+		try {
+			field.set(receiver, value);
+		} catch (IllegalAccessException exp) {
+			throw new ProvisionException(exp);
+		}
+	}
+
+	public static Object newInstance(Constructor<?> constructor, Object[] args) {
+		try {
+			return constructor.newInstance(args);
+		} catch (IllegalAccessException exp) {
+			throw new ProvisionException(exp);
+		} catch (InvocationTargetException exp) {
+			throw new ProvisionException(exp);
+		} catch (InstantiationException exp) {
+			throw new ProvisionException(exp);
+		}
 	}
 }

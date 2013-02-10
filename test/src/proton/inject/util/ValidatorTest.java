@@ -1,5 +1,6 @@
-package proton.inject.internal.util;
+package proton.inject.util;
 
+import proton.inject.util.Validator;
 import android.test.AndroidTestCase;
 
 public class ValidatorTest extends AndroidTestCase {
