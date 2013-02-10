@@ -12,7 +12,7 @@ import proton.inject.observer.event.OnNewIntentEvent;
 import proton.inject.observer.event.OnPauseEvent;
 import proton.inject.observer.event.OnRestartEvent;
 import proton.inject.observer.event.OnResumeEvent;
-import proton.inject.observer.event.OnSaveInstanceState;
+import proton.inject.observer.event.OnSaveInstanceStateEvent;
 import proton.inject.observer.event.OnStartEvent;
 import proton.inject.observer.event.OnStopEvent;
 import android.app.LauncherActivity;
@@ -87,7 +87,7 @@ public class ProtonLauncherActivity extends LauncherActivity {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		mObserverManager.fire(new OnSaveInstanceState(outState));
+		mObserverManager.fire(new OnSaveInstanceStateEvent(outState));
 	}
 
 	@Override
