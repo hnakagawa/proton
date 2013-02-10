@@ -103,11 +103,15 @@ public class InjectorImpl implements Injector {
 	@Override
 	public <T> T inject(T obj) {
 		Field[] fields;
+		Binding<?> binding;
 		synchronized (LOCK) {
-			fields = getFieldsAndAddTraversal(obj.getClass());
+			Class<?> clazz = obj.getClass();
+			fields = getFieldsAndAddTraversal(clazz);
+			binding = mBindings.get(clazz);
+
 			pollTraversalQueue();
 		}
-		injectFields(obj, fields, obj);
+		injectFields(obj, fields, binding, obj);
 		return obj;
 	}
 
@@ -138,7 +142,7 @@ public class InjectorImpl implements Injector {
 		if (required.key == Injector.class)
 			provider = mInjectorProvdier;
 		else if (required.binding != null && (provider = required.binding.getProvider()) != null) {
-			provider = new ApplicationProvider(provider, getFieldsAndAddTraversal(provider.getClass()));
+			provider = new ApplicationProvider(provider, getFieldsAndAddTraversal(provider.getClass()), required.binding);
 		} else {
 			Class<?> clazz = (Class<?>) (required.binding != null ? required.binding.getToClass() : required.key);
 			Field[] fields = getFieldsAndAddTraversal(clazz);
@@ -149,9 +153,9 @@ public class InjectorImpl implements Injector {
 				addTraversal(type, constructor);
 
 			if (getScope(clazz, required.binding) == Dependent.class)
-				provider = new DependentProvider(constructor, types, fields, required.requiredBy);
+				provider = new DependentProvider(constructor, types, fields, required.binding, required.requiredBy);
 			else
-				provider = createJitProvider(constructor, types, fields, required.requiredBy);
+				provider = createJitProvider(constructor, types, fields, required.binding, required.requiredBy);
 
 		}
 
@@ -159,7 +163,7 @@ public class InjectorImpl implements Injector {
 	}
 
 	private Provider<?> createJitProvider(final Constructor<?> constructor, final Type[] types, final Field[] fields,
-			final Object requiredBy) {
+			final Binding<?> binding, final Object requiredBy) {
 		return new Provider<Object>() {
 			private volatile Object obj;
 
@@ -168,8 +172,8 @@ public class InjectorImpl implements Injector {
 					synchronized (this) {
 						if (obj == null) {
 							obj = createInstance(constructor, types, requiredBy);
-							injectFields(obj, fields, requiredBy);
-							mProviderListeners.call(InjectorImpl.this, obj);
+							injectFields(obj, fields, binding, requiredBy);
+							mProviderListeners.call(InjectorImpl.this, obj, getScope(obj.getClass(), binding));
 						}
 					}
 				}
@@ -188,14 +192,14 @@ public class InjectorImpl implements Injector {
 		return InjectorUtils.newInstance(constructor, args);
 	}
 
-	private void injectFields(Object receiver, Field[] fields, Object requiredBy) {
+	private void injectFields(Object receiver, Field[] fields, Binding<?> binding, Object requiredBy) {
 		for (Field field : fields) {
 			if (field.getAnnotation(Inject.class) != null) {
 				Object value = getValueOrProvider(field.getType(), field.getGenericType(), requiredBy);
 				InjectorUtils.setField(receiver, field, value);
 			}
 
-			mFieldListeners.call(this, receiver, field);
+			mFieldListeners.call(this, receiver, getScope(receiver.getClass(), binding), field);
 		}
 	}
 
@@ -271,7 +275,7 @@ public class InjectorImpl implements Injector {
 		return mContext instanceof Application ^ !(ApplicationScoped.class == getScope(clazz, binding));
 	}
 
-	private Class<?> getScope(Class<?> clazz, Binding<?> binding) {
+	private Class<? extends Annotation> getScope(Class<?> clazz, Binding<?> binding) {
 		Class<? extends Annotation> scope;
 		if (binding != null && (scope = binding.getScope()) != null)
 			return scope;
@@ -283,12 +287,15 @@ public class InjectorImpl implements Injector {
 
 	private class ApplicationProvider implements ProviderProvider {
 		private volatile boolean isInjected;
+
 		private final Provider<?> mProvider;
 		private final Field[] mFields;
+		private final Binding<?> mBinding;
 
-		ApplicationProvider(Provider<?> provider, Field[] fields) {
+		ApplicationProvider(Provider<?> provider, Field[] fields, Binding<?> binding) {
 			mProvider = provider;
 			mFields = fields;
+			mBinding = binding;
 		}
 
 		@Override
@@ -296,9 +303,9 @@ public class InjectorImpl implements Injector {
 			if (!isInjected) {
 				synchronized (this) {
 					if (!isInjected) {
-						injectFields(mProvider, mFields, mProvider);
+						injectFields(mProvider, mFields, mBinding, mProvider);
 						isInjected = true;
-						mProviderListeners.call(InjectorImpl.this, this);
+						mProviderListeners.call(InjectorImpl.this, this, getScope(getClass(), mBinding));
 					}
 				}
 			}
@@ -310,18 +317,21 @@ public class InjectorImpl implements Injector {
 		private final Constructor<?> mConstructor;
 		private final Type[] mTypes;
 		private final Field[] mFields;
+		private final Binding<?> mBinding;
 		private final Object mRequiredBy;
 
-		DependentProvider(Constructor<?> constructor, Type[] types, Field[] fields, Object requiredBy) {
+		DependentProvider(Constructor<?> constructor, Type[] types, Field[] fields, Binding<?> binding,
+				Object requiredBy) {
 			mConstructor = constructor;
 			mTypes = types;
 			mFields = fields;
+			mBinding = binding;
 			mRequiredBy = requiredBy;
 		}
 
 		@Override
 		public Object get() {
-			return createJitProvider(mConstructor, mTypes, mFields, mRequiredBy);
+			return createJitProvider(mConstructor, mTypes, mFields, mBinding, mRequiredBy);
 		}
 	}
 

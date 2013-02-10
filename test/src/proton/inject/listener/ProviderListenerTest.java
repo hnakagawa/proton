@@ -1,11 +1,14 @@
 package proton.inject.listener;
 
+import java.lang.annotation.Annotation;
+
 import javax.inject.Inject;
 
 import proton.inject.DefaultModule;
 import proton.inject.Injector;
 import proton.inject.MockContext;
 import proton.inject.Proton;
+import proton.inject.scope.ContextScoped;
 import android.app.Application;
 import android.test.AndroidTestCase;
 import android.test.mock.MockApplication;
@@ -43,15 +46,18 @@ public class ProviderListenerTest extends AndroidTestCase implements ProviderLis
 		assertNotNull(mHandleInstance);
 		assertEquals(mInjector, mHandleInjector);
 		assertEquals(mHandleInstance, c.aaa);
+		assertEquals(ContextScoped.class, mHandleScope);
 	}
 
 	private Injector mHandleInjector;
 	private Object mHandleInstance;
+	private Class<? extends Annotation> mHandleScope;
 
 	@Override
-	public void onCreateInstance(Injector injector, Object instance) {
+	public void onCreateInstance(Injector injector, Object instance, Class<? extends Annotation> scope) {
 		mHandleInjector = injector;
 		mHandleInstance = instance;
+		mHandleScope = scope;
 	}
 
 	public static class Client {

@@ -1,5 +1,6 @@
 package proton.inject.listener;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +15,13 @@ public class ProviderListeners {
 		}
 	}
 
-	public void call(Injector injector, Object obj) {
+	public void call(Injector injector, Object obj, Class<? extends Annotation> scope) {
 		ProviderListener[] listeners;
 		synchronized (this) {
 			listeners = mListeners.toArray(new ProviderListener[mListeners.size()]);
 		}
 
 		for (ProviderListener listener : listeners)
-			listener.onCreateInstance(injector, obj);
+			listener.onCreateInstance(injector, obj, scope);
 	}
 }

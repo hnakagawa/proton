@@ -31,10 +31,10 @@ public final class InjectorUtils {
 		return clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers());
 	}
 
-	public static Class<?> getScopeAnnotation(Class<?> clazz) {
+	public static Class<? extends Annotation> getScopeAnnotation(Class<?> clazz) {
 		Annotation[] anns = clazz.getAnnotations();
 		for (Annotation a : anns) {
-			Class<?> annClass = a.annotationType();
+			Class<? extends Annotation> annClass = a.annotationType();
 			if (ApplicationScoped.class == annClass || Dependent.class == annClass || ContextScoped.class == annClass)
 				return annClass;
 

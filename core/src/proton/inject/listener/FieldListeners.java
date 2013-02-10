@@ -35,7 +35,7 @@ public class FieldListeners {
 		return false;
 	}
 
-	public void call(Injector injector, Object receiver, Field field) {
+	public void call(Injector injector, Object receiver, Class<? extends Annotation> scope, Field field) {
 		Annotation[] anns = field.getAnnotations();
 		if (anns.length == 0)
 			return;
@@ -47,7 +47,7 @@ public class FieldListeners {
 			}
 
 			if (listener != null)
-				listener.hear(injector, receiver, field, ann);
+				listener.hear(injector, receiver, scope, field, ann);
 		}
 	}
 }

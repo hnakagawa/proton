@@ -9,6 +9,7 @@ import proton.inject.Injector;
 import proton.inject.MockContext;
 import proton.inject.Proton;
 import proton.inject.observer.TestAnnotation;
+import proton.inject.scope.ApplicationScoped;
 import android.app.Application;
 import android.test.AndroidTestCase;
 import android.test.mock.MockApplication;
@@ -42,6 +43,8 @@ public class FieldListenerTest extends AndroidTestCase implements FieldListener 
 		Client c = mInjector.inject(new Client());
 		assertEquals(mInjector, mHandleInjector);
 		assertEquals(c, mHandleReceiver);
+		assertEquals(ApplicationScoped.class, mHandleScoep);
+
 		Field field = c.getClass().getDeclaredField("aaa");
 		assertEquals(field, mHandleField);
 		assertEquals(field.getAnnotation(TestAnnotation.class), mHandleAnnotation);
@@ -49,17 +52,20 @@ public class FieldListenerTest extends AndroidTestCase implements FieldListener 
 
 	private Injector mHandleInjector;
 	private Object mHandleReceiver;
+	private Object mHandleScoep;
 	private Field mHandleField;
 	private Annotation mHandleAnnotation;
 
 	@Override
-	public void hear(Injector injector, Object receiver, Field field, Annotation ann) {
+	public void hear(Injector injector, Object receiver, Class<? extends Annotation> scope, Field field, Annotation ann) {
 		mHandleInjector = injector;
 		mHandleReceiver = receiver;
+		mHandleScoep = scope;
 		mHandleField = field;
 		mHandleAnnotation = ann;
 	}
 
+	@ApplicationScoped
 	public static class Client {
 		@SuppressWarnings("unused")
 		@TestAnnotation
