@@ -50,6 +50,14 @@ public final class InjectorUtils {
 		}
 	}
 
+	public static Object getField(Object receiver, Field field) {
+		try {
+			return field.get(receiver);
+		} catch (IllegalAccessException exp) {
+			throw new ProvisionException(exp);
+		}
+	}
+
 	public static Object newInstance(Constructor<?> constructor, Object[] args) {
 		try {
 			return constructor.newInstance(args);

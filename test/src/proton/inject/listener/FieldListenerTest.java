@@ -8,7 +8,6 @@ import proton.inject.DefaultModule;
 import proton.inject.Injector;
 import proton.inject.MockContext;
 import proton.inject.Proton;
-import proton.inject.observer.TestAnnotation;
 import proton.inject.scope.ApplicationScoped;
 import android.app.Application;
 import android.test.AndroidTestCase;
