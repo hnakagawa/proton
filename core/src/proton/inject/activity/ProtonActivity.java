@@ -15,6 +15,7 @@ import proton.inject.observer.event.OnResumeEvent;
 import proton.inject.observer.event.OnSaveInstanceStateEvent;
 import proton.inject.observer.event.OnStartEvent;
 import proton.inject.observer.event.OnStopEvent;
+import proton.inject.state.StateEventObserver;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -22,11 +23,14 @@ import android.os.Bundle;
 
 public class ProtonActivity extends Activity {
 	private ObserverManager mObserverManager;
+	@SuppressWarnings("unused")
+	private StateEventObserver mStateEventObserver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Injector injector = Proton.getInjector(this);
 		mObserverManager = injector.getInstance(ObserverManager.class);
+		mStateEventObserver = injector.getInstance(StateEventObserver.class);
 		injector.inject(this);
 		super.onCreate(savedInstanceState);
 		mObserverManager.fire(new OnCreateEvent(savedInstanceState));
