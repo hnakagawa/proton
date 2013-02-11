@@ -1,4 +1,4 @@
-package proton.inject.binding.binding;
+package proton.inject.binding;
 
 import javax.inject.Provider;
 
