@@ -27,7 +27,7 @@ public final class Proton {
 		initialize(app, new DefaultModule());
 	}
 
-	public static void initialize(Application app, Module module) {
+	public static void initialize(Application app, Module... modules) {
 		synchronized (Proton.class) {
 			checkState(sInjectors == null, "Already initialized Proton");
 			sInjectors = new WeakHashMap<Context, InjectorImpl>();
@@ -35,7 +35,8 @@ public final class Proton {
 			sProviderListeners = new ProviderListeners();
 			sFieldListeners = new FieldListeners();
 
-			module.configure(sBindings, sProviderListeners, sFieldListeners);
+			for (Module module : modules)
+				module.configure(sBindings, sProviderListeners, sFieldListeners);
 
 			InjectorImpl injector = new InjectorImpl(app, sBindings, sProviderListeners, sFieldListeners, null);
 			sInjectors.put(app, injector);
