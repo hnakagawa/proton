@@ -1,10 +1,5 @@
 package proton.inject;
 
-import static proton.inject.util.Validator.checkNotNull;
-import static proton.inject.util.Validator.checkState;
-
-import java.lang.annotation.Annotation;
-
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -23,13 +18,6 @@ import android.telephony.TelephonyManager;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import proton.inject.binding.BindingBuilder;
-import proton.inject.binding.BindingBuilderImpl;
-import proton.inject.binding.Bindings;
-import proton.inject.listener.FieldListener;
-import proton.inject.listener.FieldListeners;
-import proton.inject.listener.ProviderListener;
-import proton.inject.listener.ProviderListeners;
 import proton.inject.observer.ObserverManager;
 import proton.inject.observer.ObserverRegister;
 import proton.inject.provider.AccountManagerProvider;
@@ -43,30 +31,9 @@ import proton.inject.state.SaveStateListener;
 import proton.inject.state.StateEventObserver;
 import proton.inject.state.StateManager;
 
-public class DefaultModule implements Module {
-	private Bindings mBindings;
-	private ProviderListeners mProviderListeners;
-	private FieldListeners mFieldListeners;
-
+public class DefaultModule extends AbstractModule {
 	@SuppressWarnings("rawtypes")
 	private static final Class mAccountManagerClass = loadClass("android.accounts.AccountManager");
-
-	@Override
-	public final synchronized void configure(Bindings bindings, ProviderListeners providerListeners,
-			FieldListeners fieldListeners) {
-		checkState(mBindings == null, "Re-entry is not allowed.");
-
-		mBindings = checkNotNull(bindings, "bindings");
-		mProviderListeners = checkNotNull(providerListeners, "providerListeners");
-		mFieldListeners = checkNotNull(fieldListeners, "fieldListeners");
-
-		try {
-			configure();
-		} finally {
-			mProviderListeners = null;
-			mBindings = null;
-		}
-	}
 
 	private static Class<?> loadClass(String className) {
 		try {
@@ -109,18 +76,5 @@ public class DefaultModule implements Module {
 		bind(StateManager.class).in(ApplicationScoped.class);
 		bind(StateEventObserver.class);
 		bindFieldListener(SaveState.class, new SaveStateListener());
-	}
-
-	protected <T> BindingBuilder<T> bind(Class<T> clazz) {
-		checkState(mBindings != null, "The Bindings can only be used inside configure()");
-		return new BindingBuilderImpl<T>(clazz, mBindings);
-	}
-
-	protected void bindProviderListener(ProviderListener providerListener) {
-		mProviderListeners.register(providerListener);
-	}
-
-	protected void bindFieldListener(Class<? extends Annotation> annClass, FieldListener fieldListener) {
-		mFieldListeners.register(annClass, fieldListener);
 	}
 }
