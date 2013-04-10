@@ -91,28 +91,28 @@ public class StateRecoveryTest extends AndroidTestCase {
 	}
 
 	public static class Aaa {
-		@SaveState
+		@RetainState
 		private int intState;
 
-		@SaveState
+		@RetainState
 		private int[] intArrayState = new int[1];
 
-		@SaveState
+		@RetainState
 		private Integer integerState;
 
-		@SaveState
+		@RetainState
 		private ArrayList<Integer> integerListState;
 
-		@SaveState
+		@RetainState
 		private String stringState;
 
-		@SaveState
+		@RetainState
 		private String[] stringArrayState;
 
-		@SaveState
+		@RetainState
 		private ParcelableClass parcelableState;
 
-		@SaveState
+		@RetainState
 		private ParcelableClass[] parcelableArrayState; 
 	}
 

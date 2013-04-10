@@ -26,8 +26,8 @@ import proton.inject.provider.ContextProvider;
 import proton.inject.provider.HandlerProvider;
 import proton.inject.provider.SystemServiceProvider;
 import proton.inject.scope.ApplicationScoped;
-import proton.inject.state.SaveState;
-import proton.inject.state.SaveStateListener;
+import proton.inject.state.RetainState;
+import proton.inject.state.RetainStateListener;
 import proton.inject.state.StateEventObserver;
 import proton.inject.state.StateManager;
 
@@ -75,6 +75,6 @@ public class DefaultModule extends AbstractModule {
 
 		bind(StateManager.class).in(ApplicationScoped.class);
 		bind(StateEventObserver.class);
-		bindFieldListener(SaveState.class, new SaveStateListener());
+		bindFieldListener(RetainState.class, new RetainStateListener());
 	}
 }

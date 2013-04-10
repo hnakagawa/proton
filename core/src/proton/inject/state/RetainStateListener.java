@@ -7,10 +7,10 @@ import proton.inject.Injector;
 import proton.inject.listener.FieldListener;
 import proton.inject.scope.ContextScoped;
 
-public class SaveStateListener implements FieldListener {
+public class RetainStateListener implements FieldListener {
 	@Override
 	public void hear(Injector injector, Object receiver, Class<? extends Annotation> scope, Field field, Annotation ann) {
-		if (ann.annotationType() != SaveState.class)
+		if (ann.annotationType() != RetainState.class)
 			throw new IllegalStateException(); // XXX
 
 		if (ContextScoped.class == scope)

@@ -1,7 +1,7 @@
 package proton.example;
 
 import proton.inject.scope.ContextScoped;
-import proton.inject.state.SaveState;
+import proton.inject.state.RetainState;
 
 @ContextScoped
 public class GreetingImpl implements Greeting {
@@ -9,7 +9,7 @@ public class GreetingImpl implements Greeting {
 
 	// This value is saved automatically
 	// when the android system call onSaveInstanceState
-	@SaveState
+	@RetainState
 	private int mState = -1;
 
 	@Override
