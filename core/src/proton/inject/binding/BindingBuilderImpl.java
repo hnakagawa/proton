@@ -57,11 +57,12 @@ public class BindingBuilderImpl<T> implements BindingBuilder<T> {
 	}
 
 	private void setScope(Class<?> clazz) {
-		Annotation ann;
-		if ((ann = clazz.getAnnotation(ApplicationScoped.class)) != null
-				|| (ann = clazz.getAnnotation(Dependent.class)) != null
-				|| (ann = clazz.getAnnotation(ContextScoped.class)) != null)
-			mBinding.setScope(ann.annotationType());
+		Annotation[] anns = clazz.getAnnotations();
+		for (Annotation ann : anns) {
+			if (ApplicationScoped.class.isInstance(ann) || Dependent.class.isInstance(ann)
+					|| ContextScoped.class.isInstance(ann))
+				mBinding.setScope(ann.annotationType());
+		}
 	}
 
 	private void validateAnnotation(Class<?> clazz) {
