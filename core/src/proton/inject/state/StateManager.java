@@ -12,6 +12,7 @@ import proton.inject.util.InjectorUtils;
 import proton.inject.util.SparseClassArray;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.SparseArray;
@@ -69,7 +70,8 @@ public class StateManager {
 		sDispatchers.put(float.class, serializableDispatcher);
 		sDispatchers.put(double.class, serializableDispatcher);
 		sDispatchers.put(CharSequence.class, charSequenceDispatcher);
-		sDispatchers.put(CharSequence[].class, charSequenceArrayDispatcher);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+			sDispatchers.put(CharSequence[].class, charSequenceArrayDispatcher);
 		sDispatchers.put(Parcelable.class, parcelableDispatcher);
 		sDispatchers.put(Parcelable[].class, parcelableArrayDispatcher);
 		sDispatchers.put(Serializable.class, serializableDispatcher);
