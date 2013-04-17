@@ -4,9 +4,6 @@
 
 package proton.inject.util;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
