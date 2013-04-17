@@ -4,7 +4,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -22,6 +21,7 @@ import proton.inject.listener.FieldListeners;
 import proton.inject.listener.ProviderListeners;
 import proton.inject.scope.ApplicationScoped;
 import proton.inject.scope.Dependent;
+import proton.inject.util.ArrayDeque;
 import proton.inject.util.InjectorUtils;
 import proton.inject.util.SparseClassArray;
 
