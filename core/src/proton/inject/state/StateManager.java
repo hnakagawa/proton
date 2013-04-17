@@ -11,6 +11,7 @@ import proton.inject.ProvisionException;
 import proton.inject.util.InjectorUtils;
 import proton.inject.util.SparseClassArray;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class StateManager {
 		};
 		Dispatcher charSequenceArrayDispatcher = new Dispatcher() {
 			@Override
+			@TargetApi(8)
 			public void dispatch(Bundle bundle, String key, Object value) {
 				bundle.putCharSequenceArray(key, (CharSequence[]) value);
 			}
