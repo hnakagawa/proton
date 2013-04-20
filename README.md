@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/hnakagawa/proton.png)](https://travis-ci.org/hnakagawa/proton)
+
 ## What is Proton?
 A lightweight dependency injection framework for Android.
 
