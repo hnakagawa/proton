@@ -272,7 +272,7 @@ public class InjectorImpl implements Injector {
 	}
 
 	private boolean isInScope(Class<?> clazz, Binding<?> binding) {
-		return mContext instanceof Application ^ !(ApplicationScoped.class == getScope(clazz, binding));
+		return mContext instanceof Application ^ ApplicationScoped.class != getScope(clazz, binding);
 	}
 
 	private Class<? extends Annotation> getScope(Class<?> clazz, Binding<?> binding) {
