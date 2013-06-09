@@ -1,9 +1,10 @@
 package proton.inject.listener;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 
 import proton.inject.Injector;
+import proton.inject.internal.Element.ElementField;
+import proton.inject.internal.Element.ElementField.ElementFieldListener;
 import proton.inject.util.SparseClassArray;
 
 public class FieldListeners {
@@ -21,33 +22,18 @@ public class FieldListeners {
 		}
 	}
 
-	public boolean hasListener(Field field) {
-		Annotation[] anns = field.getAnnotations();
-		if (anns.length == 0)
-			return false;
-
+	public FieldListener getListener(Class<?> clazz) {
 		synchronized (this) {
-			for (Annotation ann : anns) {
-				return mListeners.get(ann.annotationType()) != null;
-			}
+			return mListeners.get(clazz);
 		}
-
-		return false;
 	}
 
-	public void call(Injector injector, Object receiver, Class<? extends Annotation> scope, Field field) {
-		Annotation[] anns = field.getAnnotations();
-		if (anns.length == 0)
+	public void call(Injector injector, Object receiver, Class<? extends Annotation> scope, ElementField field) {
+		if (field.listeners.length == 0)
 			return;
-
-		for (Annotation ann : anns) {
-			FieldListener listener;
-			synchronized (this) {
-				listener = mListeners.get(ann.annotationType());
-			}
-
-			if (listener != null)
-				listener.hear(injector, receiver, scope, field, ann);
-		}
+		
+		ElementFieldListener[] listeners = field.listeners;
+		for (ElementFieldListener listener : listeners)
+			listener.listener.hear(injector, receiver, scope, field.field, listener.annotation);
 	}
 }

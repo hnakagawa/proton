@@ -66,7 +66,6 @@ public class FieldListenerTest extends AndroidTestCase implements FieldListener 
 
 	@ApplicationScoped
 	public static class Client {
-		@SuppressWarnings("unused")
 		@TestAnnotation
 		private int aaa;
 	}
