@@ -24,7 +24,8 @@ before_install:
     - emulator -avd test -no-skin -no-audio -no-window &
 
     # Make build.xml files
-    - android update project --path ./core --target android-17
+    - android update lib-project --path ./appcompat --target android-17
+    - android update project --path ./core --library ../appcompat --target android-17
     - android update test-project -m ../example -p ./test
 
     # Make sure the emulator has started before running tests
