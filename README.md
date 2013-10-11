@@ -99,7 +99,6 @@ public class BigCoffeeMaker {
 @RetainState saves value automatically when the android system call onSaveInstanceState.
 
 ## Todo
-- Clarity error messages
 - Test utility
 
 ## License

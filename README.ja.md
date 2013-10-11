@@ -8,7 +8,6 @@ Inspired by MiniGuice and RoboGuice
 
 Todo
 ------
-+   エラーメッセージを分かりやすくする
 +   テストユーティリティ
 
 License
