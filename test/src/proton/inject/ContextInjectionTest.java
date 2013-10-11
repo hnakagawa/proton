@@ -73,7 +73,6 @@ public class ContextInjectionTest extends AndroidTestCase {
 
 	@ApplicationScoped
 	public static class ApplicationScopedClass {
-		@SuppressWarnings("unused")
 		@Inject
 		private Context context;
 	}

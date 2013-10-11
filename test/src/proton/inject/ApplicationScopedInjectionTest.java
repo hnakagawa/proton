@@ -76,7 +76,6 @@ public class ApplicationScopedInjectionTest extends AndroidTestCase {
 	}
 
 	public static class IllegalApplicationScopedClass {
-		@SuppressWarnings("unused")
 		@Inject
 		private ContextScopedClass contextScopedClass;
 	}

@@ -66,7 +66,6 @@ public class ImplicitInjectionTest extends AndroidTestCase {
 	}
 
 	public static class IllegalImplicitInjectionClass {
-		@SuppressWarnings("unused")
 		@Inject
 		private Bbb bbb;
 	}
