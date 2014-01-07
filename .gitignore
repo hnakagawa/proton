@@ -15,6 +15,8 @@
 # generated files
 bin/
 gen/
+lint.xml
+proguard/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -22,3 +24,27 @@ local.properties
 # Gradle
 .gradle
 build/
+
+# roboelectric
+tmp/
+
+# Eclipse workspace
+.metadata/
+.checkstyle
+.settings
+
+# intelli J
+.idea
+*.iml
+*.ipr
+*.iws
+
+# mac
+.Trashes
+.DS_Store
+
+# Win
+Thumbs.db
+
+# Vim
+*.swp
