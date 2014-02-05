@@ -1,1 +1,1 @@
-include ':Proton'
+include ':Proton', ':ProtonExample'
