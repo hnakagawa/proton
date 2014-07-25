@@ -98,6 +98,20 @@ public class BigCoffeeMaker {
 #### RetainState
 @RetainState saves value automatically when the android system call onSaveInstanceState.
 
+## Proguard Settings
+
+You need to add the following lines to your proguard configuration file.
+
+```
+-keepattributes *Annotation*
+-keepclassmembers class * {
+   @javax.inject.Inject <init>(...);
+}
+-keepclassmembers class * {
+   void *(**On*Event);
+}
+```
+
 ## Todo
 - Test utility
 
