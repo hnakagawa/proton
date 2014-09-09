@@ -14,10 +14,7 @@ before_install:
     - tar -zxf android-sdk_r22.2.1-linux.tgz
     - export ANDROID_HOME=`pwd`/android-sdk-linux
     - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-    - echo "sdk.dir=$ANDROID_HOME" > appcompat/local.properties
-    - echo "sdk.dir=$ANDROID_HOME" > core/local.properties
-    - echo "sdk.dir=$ANDROID_HOME" > example/local.properties
-    - echo "sdk.dir=$ANDROID_HOME" > test/local.properties
+    - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - echo "y" | android update sdk --filter platform-tools,android-17,extra-android-support,$ANDROID_SDKS --no-ui --force
     - echo "y" | android update lib-project --path ./appcompat --target android-17
     - echo "y" | android update project --path ./core --library ../appcompat --target android-17
